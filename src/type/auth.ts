@@ -27,3 +27,6 @@ export const signUpSchema = z
     message: message.password.mismatch,
     path: ["confirmPassword"],
   });
+
+export type SignInType = z.infer<typeof signInSchema>;
+export type SignUpType = z.infer<typeof signUpSchema>;

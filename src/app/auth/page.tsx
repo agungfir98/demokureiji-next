@@ -1,31 +1,10 @@
-"use client";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { TabsContent } from "@radix-ui/react-tabs";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { Button } from "~/components/ui/button";
-import { Card, CardContent } from "~/components/ui/card";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-} from "~/components/ui/form";
-import { Input } from "~/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { signInSchema } from "~/type/auth";
+import { SignInForm } from "./signIn";
+import { SignUpForm } from "./signUp";
 
-type SignInType = z.infer<typeof signInSchema>;
 const Auth = () => {
-  const signInForm = useForm<SignInType>({
-    resolver: zodResolver(signInSchema),
-  });
-
-  const signIn = (data: SignInType) => {
-    console.log(data);
-  };
-
   return (
     <div className="max-h-screen relative">
       <Tabs defaultValue="signIn" className="max-w-sm w-sm mx-auto my-20">
@@ -35,44 +14,25 @@ const Auth = () => {
         </TabsList>
         <TabsContent value="signIn">
           <Card className="">
+            <CardHeader>
+              <CardTitle className="self-center">
+                Sign in to DemoKureiji
+              </CardTitle>
+            </CardHeader>
             <CardContent>
-              <Form {...signInForm}>
-                <form onSubmit={signInForm.handleSubmit(signIn)}>
-                  <div className="grid gap-5">
-                    <FormField
-                      control={signInForm.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel title={field.name}>{field.name}</FormLabel>
-                          <FormControl>
-                            <Input placeholder={field.name} {...field} />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={signInForm.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel title={field.name}>{field.name}</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="password"
-                              placeholder={field.name}
-                              {...field}
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                    <Button type="submit" className="w-full">
-                      Submit
-                    </Button>
-                  </div>
-                </form>
-              </Form>
+              <SignInForm />
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="signUp">
+          <Card className="">
+            <CardHeader>
+              <CardTitle className="self-center">
+                Sign up to DemoKureiji
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <SignUpForm />
             </CardContent>
           </Card>
         </TabsContent>

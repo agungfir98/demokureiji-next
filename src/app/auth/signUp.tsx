@@ -1,7 +1,8 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { LoaderCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
 import {
   Form,
@@ -12,21 +13,33 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import { signUpSchema } from "~/type/auth";
-
-type SignUpType = z.infer<typeof signUpSchema>;
+import authService from "~/services/authService";
+import { signUpSchema, type SignUpType } from "~/type/auth";
 
 export const SignUpForm = () => {
   const signUpForm = useForm<SignUpType>({
     resolver: zodResolver(signUpSchema),
+    defaultValues: {
+      email: "",
+      name: "",
+      password: "",
+      confirmPassword: "",
+    },
   });
 
-  const signIn = (data: SignUpType) => {
-    console.log(data);
-  };
+  const { mutate, isPending } = authService.signUp({
+    onError(err) {
+      const message = err.response?.data.message as string;
+      toast.error(message);
+    },
+    onSuccess() {
+      toast.success("Account created successfully! You can now sign in");
+    },
+  });
+
   return (
     <Form {...signUpForm}>
-      <form onSubmit={signUpForm.handleSubmit(signIn)}>
+      <form onSubmit={signUpForm.handleSubmit((data) => mutate(data))}>
         <div className="grid gap-5">
           <FormField
             control={signUpForm.control}
@@ -81,7 +94,10 @@ export const SignUpForm = () => {
             )}
           />
           <Button type="submit" className="w-full">
-            sign up
+            <p>sign up</p>
+            <LoaderCircle
+              className={`animate-spin ${!isPending && "hidden"}`}
+            />
           </Button>
         </div>
       </form>
