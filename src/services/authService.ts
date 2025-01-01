@@ -1,12 +1,11 @@
 import { useMutation, UseMutationOptions } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import useAuthStore from "~/hooks/useAuth";
 import authApi from "~/lib/api/auth/auth.api";
 import { SignInType, SignUpType } from "~/type/auth";
 import { IApiResponse } from "~/type/httpResponse";
 
-class AuthService {
-  signIn(
+export const authService = {
+  SignIn(
     options?: Omit<
       UseMutationOptions<unknown, AxiosError<IApiResponse>, SignInType>,
       "mutationFn"
@@ -18,9 +17,9 @@ class AuthService {
         return authApi.signIn(data);
       },
     });
-  }
+  },
 
-  signUp(
+  SignUp(
     options?: Omit<
       UseMutationOptions<unknown, AxiosError<IApiResponse>, SignUpType>,
       "mutationFn"
@@ -32,13 +31,19 @@ class AuthService {
         return authApi.signUp(data);
       },
     });
-  }
+  },
 
-  async signOut() {
-    const { setToken } = useAuthStore();
-    return setToken(null);
-  }
-}
-
-const authService = new AuthService();
-export default authService;
+  SignOut(
+    options?: Omit<
+      UseMutationOptions<unknown, AxiosError<IApiResponse>>,
+      "mutationFn"
+    >
+  ) {
+    return useMutation({
+      ...options,
+      mutationFn() {
+        return authApi.signOut();
+      },
+    });
+  },
+};
