@@ -9,6 +9,10 @@ class AuthApi {
   signUp(data: SignUpType) {
     return axiosInstance.post("/auth/signup", data);
   }
+
+  signOut() {
+    return axiosInstance.post("/auth/logout");
+  }
 }
 
 const authApi = new AuthApi();
