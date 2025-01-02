@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export interface IApiResponse {
+export interface IApiResponse<TData = any, TError = any> {
   success: boolean;
   statusCode: number;
   message: string;
-  data?: any;
-  error?: any;
+  data?: TData;
+  error?: TError;
   timestamp: string;
 }
