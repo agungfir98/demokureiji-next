@@ -1,16 +1,10 @@
-import { useMutation, UseMutationOptions } from "@tanstack/react-query";
-import { AxiosError } from "axios";
+import { useMutation } from "@tanstack/react-query";
 import authApi from "~/lib/api/auth/auth.api";
 import { SignInType, SignUpType } from "~/type/auth";
-import { IApiResponse } from "~/type/httpResponse";
+import { OptionsQuery } from "~/type/react-query";
 
 export const authService = {
-  SignIn(
-    options?: Omit<
-      UseMutationOptions<unknown, AxiosError<IApiResponse>, SignInType>,
-      "mutationFn"
-    >
-  ) {
+  SignIn(options?: OptionsQuery<SignInType>) {
     return useMutation({
       ...options,
       mutationFn(data) {
@@ -19,12 +13,7 @@ export const authService = {
     });
   },
 
-  SignUp(
-    options?: Omit<
-      UseMutationOptions<unknown, AxiosError<IApiResponse>, SignUpType>,
-      "mutationFn"
-    >
-  ) {
+  SignUp(options?: OptionsQuery<SignUpType>) {
     return useMutation({
       ...options,
       mutationFn(data) {
@@ -33,12 +22,7 @@ export const authService = {
     });
   },
 
-  SignOut(
-    options?: Omit<
-      UseMutationOptions<unknown, AxiosError<IApiResponse>>,
-      "mutationFn"
-    >
-  ) {
+  SignOut(options?: OptionsQuery) {
     return useMutation({
       ...options,
       mutationFn() {
