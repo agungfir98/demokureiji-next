@@ -1,6 +1,7 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoaderCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
@@ -13,7 +14,7 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import authService from "~/services/authService";
+import { authService } from "~/services/authService";
 import { signInSchema, type SignInType } from "~/type/auth";
 
 export const SignInForm = () => {
@@ -25,14 +26,14 @@ export const SignInForm = () => {
     },
   });
 
-  const { mutate, isPending } = authService.signIn({
+  const router = useRouter();
+  const { mutate, isPending } = authService.SignIn({
     onError(err) {
       const message = err.response?.data.message as string;
-      toast.error(message);
+      return toast.error(message);
     },
     onSuccess() {
-      console.log("authenticated!");
-      //TODO: do redirect when the dashboard page done
+      return router.refresh();
     },
   });
 

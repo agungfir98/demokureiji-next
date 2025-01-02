@@ -13,7 +13,7 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import authService from "~/services/authService";
+import { authService } from "~/services/authService";
 import { signUpSchema, type SignUpType } from "~/type/auth";
 
 export const SignUpForm = () => {
@@ -27,13 +27,13 @@ export const SignUpForm = () => {
     },
   });
 
-  const { mutate, isPending } = authService.signUp({
+  const { mutate, isPending } = authService.SignUp({
     onError(err) {
       const message = err.response?.data.message as string;
-      toast.error(message);
+      return toast.error(message);
     },
     onSuccess() {
-      toast.success("Account created successfully! You can now sign in");
+      return toast.success("Account created successfully! You can now sign in");
     },
   });
 
