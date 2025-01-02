@@ -1,10 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
 import authApi from "~/lib/api/auth/auth.api";
 import { SignInType, SignUpType } from "~/type/auth";
-import { OptionsQuery } from "~/type/react-query";
+import { MutationOptions } from "~/type/react-query";
 
 export const authService = {
-  SignIn(options?: OptionsQuery<SignInType>) {
+  SignIn(options?: MutationOptions<SignInType>) {
     return useMutation({
       ...options,
       mutationFn(data) {
@@ -13,7 +13,7 @@ export const authService = {
     });
   },
 
-  SignUp(options?: OptionsQuery<SignUpType>) {
+  SignUp(options?: MutationOptions<SignUpType>) {
     return useMutation({
       ...options,
       mutationFn(data) {
@@ -22,7 +22,7 @@ export const authService = {
     });
   },
 
-  SignOut(options?: OptionsQuery) {
+  SignOut(options?: MutationOptions) {
     return useMutation({
       ...options,
       mutationFn() {
