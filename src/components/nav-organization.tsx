@@ -4,9 +4,11 @@ import {
   Folder,
   Forward,
   MoreHorizontal,
+  Plus,
   Trash2,
   type LucideIcon,
 } from "lucide-react";
+import Link from "next/link";
 
 import {
   DropdownMenu,
@@ -40,14 +42,26 @@ export function NavOrg({
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Organization</SidebarGroupLabel>
       <SidebarMenu>
+        <SidebarMenuItem>
+          <Link href="/org/new" passHref>
+            <SidebarMenuButton asChild variant="outline">
+              <div>
+                <Plus />
+                Create New Organization
+              </div>
+            </SidebarMenuButton>
+          </Link>
+        </SidebarMenuItem>
         {organization.map((item) => (
           <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton asChild>
-              <a href={item.url}>
-                <item.icon />
-                <span>{item.name}</span>
-              </a>
-            </SidebarMenuButton>
+            <Link href={item.url} passHref>
+              <SidebarMenuButton asChild>
+                <div>
+                  <item.icon />
+                  <span>{item.name}</span>
+                </div>
+              </SidebarMenuButton>
+            </Link>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuAction showOnHover>

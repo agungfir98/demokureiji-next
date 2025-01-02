@@ -1,5 +1,6 @@
+"use client";
 import { ThemeProvider } from "next-themes";
-import React, { PropsWithChildren } from "react";
+import React, { PropsWithChildren, ReactNode } from "react";
 
 import { AppSidebar } from "~/components/app-sidebar";
 import DynamicBreadCrumb from "~/components/dynamic-breadcrumb";
@@ -10,7 +11,10 @@ import {
   SidebarTrigger,
 } from "~/components/ui/sidebar";
 
-const DashboardLayout: React.FC<PropsWithChildren> = ({ children }) => {
+const DashboardLayout: React.FC<PropsWithChildren & { modal: ReactNode }> = ({
+  children,
+  modal,
+}) => {
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <SidebarProvider>
@@ -25,6 +29,7 @@ const DashboardLayout: React.FC<PropsWithChildren> = ({ children }) => {
           </header>
           <div className="flex flex-1 flex-col gap-4 p-4 pt-0 bg-background">
             {children}
+            {modal}
           </div>
         </SidebarInset>
       </SidebarProvider>
