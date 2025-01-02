@@ -14,6 +14,7 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
+import useAuthStore from "~/hooks/useAuth";
 import { authService } from "~/services/authService";
 import { signInSchema, type SignInType } from "~/type/auth";
 
@@ -26,14 +27,17 @@ export const SignInForm = () => {
     },
   });
 
+  const { setToken } = useAuthStore();
   const router = useRouter();
   const { mutate, isPending } = authService.SignIn({
     onError(err) {
       const message = err.response?.data.message as string;
       return toast.error(message);
     },
-    onSuccess() {
-      return router.refresh();
+    onSuccess({ data }) {
+      setToken(data.data.token);
+
+      return router.replace("/");
     },
   });
 
