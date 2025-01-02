@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { Lexend } from "next/font/google";
+import { Geist } from "next/font/google";
 import "./globals.css";
 
-const lexendSans = Lexend({
-  variable: "--font-lexend-sans",
+const geistSans = Geist({
+  variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
@@ -19,7 +19,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${lexendSans.className} antialiased`}>{children}</body>
+      <body className={`${geistSans.className} antialiased bg-background`}>
+        {children}
+      </body>
     </html>
   );
 }
