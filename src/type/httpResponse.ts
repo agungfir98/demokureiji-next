@@ -7,3 +7,30 @@ export interface IApiResponse<TData = any, TError = any> {
   error?: TError;
   timestamp: string;
 }
+
+export interface IUser<Org = string, Event = string> extends Document {
+  email: string;
+  name: string;
+  password: string;
+  organization: Org[];
+  voteParticipation: Event[];
+  tokenVersion: number;
+}
+
+export interface IOrganization<User = string, Event = string> extends Document {
+  organization: string;
+  admin: User[];
+  members: User[];
+  description: string;
+  voteEvents: Event[];
+}
+
+export interface IEvent<User = string, Org = string> extends Document {
+  voteTitle: string;
+  holder: Org;
+  isActive: boolean;
+  status: "inactive" | "active" | "finished";
+  finishedDate: Date;
+  candidates: User[];
+  registeredVoters: User[];
+}
