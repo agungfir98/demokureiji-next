@@ -1,17 +1,21 @@
-"use client";
+"use server";
 import React, { PropsWithChildren } from "react";
-import { ThemeProvider } from "~/components/theme-provider";
-import LandingPage from "./landing/page";
 
-const MainLayout: React.FC<PropsWithChildren> = ({ children }) => {
-  const session = false;
+import { getSession } from "~/lib/session";
+import LandingPage from "./landing/page";
+import { QueryProvider } from "~/components/query-provider";
+import { Toaster } from "~/components/ui/sonner";
+
+const MainLayout: React.FC<PropsWithChildren> = async ({ children }) => {
+  const user = await getSession();
 
   return (
     <>
-      {session ? (
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      {user ? (
+        <QueryProvider>
+          <Toaster />
           {children}
-        </ThemeProvider>
+        </QueryProvider>
       ) : (
         <LandingPage />
       )}
