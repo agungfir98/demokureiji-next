@@ -20,7 +20,7 @@ const DashboardLayout: React.FC<PropsWithChildren & { modal: ReactNode }> = ({
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <SidebarProvider>
         <AppSidebar />
-        <SidebarInset>
+        <SidebarInset className="h-screen">
           <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 bg-background">
             <div className="flex items-center gap-2 px-4">
               <SidebarTrigger className="-ml-1" />
@@ -28,10 +28,17 @@ const DashboardLayout: React.FC<PropsWithChildren & { modal: ReactNode }> = ({
               <DynamicBreadCrumb />
             </div>
           </header>
-          <div className="flex flex-1 flex-col gap-4 p-4 pt-0 bg-background">
-            <ScrollArea>{children}</ScrollArea>
-            {modal}
+          <div className="flex-grow gap-4 pt-0 bg-background overflow-hidden">
+            <ScrollArea className="h-full overflow-auto px-4 ">
+              {children}
+              {modal}
+            </ScrollArea>
           </div>
+          <footer className="py-4 flex justify-center items-center">
+            <p className="text-xs opacity-65">
+              &copy; Demokureiji - by Agung Dev
+            </p>
+          </footer>
         </SidebarInset>
       </SidebarProvider>
     </ThemeProvider>
