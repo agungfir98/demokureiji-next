@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { axiosInstance } from "~/lib/api/api";
+import orgApi from "~/lib/api/org/org.api";
 import { IOrganization, IUser } from "~/type/httpResponse";
 import { NewOrgType } from "~/type/org";
 import { MutationOptions, QueryOptions } from "~/type/react-query";
@@ -20,7 +21,7 @@ export const orgService = {
     return useMutation({
       ...options,
       mutationFn(data) {
-        return axiosInstance.post("/org/new", data);
+        return orgApi.newOrg(data);
       },
     });
   },
