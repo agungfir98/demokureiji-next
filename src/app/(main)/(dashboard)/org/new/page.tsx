@@ -1,5 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -37,11 +38,11 @@ const NewOrganization = () => {
 
   const router = useRouter();
 
-  const { mutate } = orgService.newOrganization({
+  const { mutate, isPending } = orgService.newOrganization({
     onSuccess({ data }) {
       toast.success(data.message);
       queryClient.invalidateQueries({ queryKey: ["organization"] });
-      router.push("/org");
+      return router.back();
     },
   });
 
@@ -80,6 +81,7 @@ const NewOrganization = () => {
                           placeholder="organization description"
                           rows={4}
                           className="max-h-[200px]"
+                          {...field}
                         />
                       </FormControl>
                       <FormMessage />
@@ -89,7 +91,12 @@ const NewOrganization = () => {
               </div>
             </CardContent>
             <CardFooter className="justify-end">
-              <Button className="self-end sm:w-fit w-full">Submit</Button>
+              <Button className="self-end sm:w-fit w-full">
+                <LoaderCircle
+                  className={`animate-spin ${!isPending && "hidden"}`}
+                />
+                Submit
+              </Button>
             </CardFooter>
           </form>
         </Form>
