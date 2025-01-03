@@ -36,7 +36,7 @@ const DynamicBreadCrumb = () => {
                 {last ? (
                   <BreadcrumbPage>{segment}</BreadcrumbPage>
                 ) : (
-                  <BreadcrumbLink href={href}>{segment}</BreadcrumbLink>
+                  <BreadcrumbLink href={`/${href}`}>{segment}</BreadcrumbLink>
                 )}
               </BreadcrumbItem>
             </Fragment>
