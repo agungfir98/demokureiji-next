@@ -14,6 +14,7 @@ import {
 } from "~/components/ui/sidebar";
 import { NavOrg } from "./nav-organization";
 import { NavHeader } from "./nav-header";
+import { ScrollArea } from "./ui/scroll-area";
 
 const data = {
   user: {
@@ -70,8 +71,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavHeader />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavOrg organization={data.organizations} />
+        <ScrollArea>
+          <NavMain items={data.navMain} />
+          <NavOrg organization={data.organizations} />
+        </ScrollArea>
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

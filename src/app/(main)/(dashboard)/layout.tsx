@@ -4,6 +4,7 @@ import React, { PropsWithChildren, ReactNode } from "react";
 
 import { AppSidebar } from "~/components/app-sidebar";
 import DynamicBreadCrumb from "~/components/dynamic-breadcrumb";
+import { ScrollArea } from "~/components/ui/scroll-area";
 import { Separator } from "~/components/ui/separator";
 import {
   SidebarInset,
@@ -28,7 +29,7 @@ const DashboardLayout: React.FC<PropsWithChildren & { modal: ReactNode }> = ({
             </div>
           </header>
           <div className="flex flex-1 flex-col gap-4 p-4 pt-0 bg-background">
-            {children}
+            <ScrollArea>{children}</ScrollArea>
             {modal}
           </div>
         </SidebarInset>
