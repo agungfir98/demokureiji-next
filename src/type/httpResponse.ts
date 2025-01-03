@@ -9,6 +9,7 @@ export interface IApiResponse<TData = any, TError = any> {
 }
 
 export interface IUser<Org = string, Event = string> extends Document {
+  _id: string;
   email: string;
   name: string;
   password: string;
@@ -18,6 +19,7 @@ export interface IUser<Org = string, Event = string> extends Document {
 }
 
 export interface IOrganization<User = string, Event = string> extends Document {
+  _id: string;
   organization: string;
   admin: User[];
   members: User[];
@@ -26,6 +28,7 @@ export interface IOrganization<User = string, Event = string> extends Document {
 }
 
 export interface IEvent<User = string, Org = string> extends Document {
+  _id: string;
   voteTitle: string;
   holder: Org;
   isActive: boolean;
