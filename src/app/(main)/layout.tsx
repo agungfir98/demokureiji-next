@@ -1,12 +1,13 @@
 "use server";
-import React, { PropsWithChildren } from "react";
+import React, { PropsWithChildren, ReactNode } from "react";
 
 import { getSession } from "~/lib/session";
-import LandingPage from "./landing/page";
 import { QueryProvider } from "~/components/query-provider";
 import { Toaster } from "~/components/ui/sonner";
 
-const MainLayout: React.FC<PropsWithChildren> = async ({ children }) => {
+const MainLayout: React.FC<
+  PropsWithChildren & { landing: ReactNode }
+> = async ({ children, landing }) => {
   const user = await getSession();
 
   return (
@@ -17,7 +18,7 @@ const MainLayout: React.FC<PropsWithChildren> = async ({ children }) => {
           {children}
         </QueryProvider>
       ) : (
-        <LandingPage />
+        landing
       )}
     </>
   );
