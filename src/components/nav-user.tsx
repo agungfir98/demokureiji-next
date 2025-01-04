@@ -1,6 +1,12 @@
 "use client";
 
-import { BadgeCheck, ChevronsUpDown, LogOut, Sparkles } from "lucide-react";
+import {
+  BadgeCheck,
+  ChevronsUpDown,
+  LoaderCircle,
+  LogOut,
+  Sparkles,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
@@ -20,6 +26,18 @@ import {
   useSidebar,
 } from "~/components/ui/sidebar";
 import { authService } from "~/services/authService";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "./ui/alert-dialog";
+import { AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
+import { useState } from "react";
 
 export function NavUser({
   user,
@@ -32,11 +50,13 @@ export function NavUser({
 }) {
   const { isMobile } = useSidebar();
   const router = useRouter();
-  const { mutate } = authService.SignOut({
+  const { mutate, isPending } = authService.SignOut({
     onSuccess() {
       router.refresh();
     },
   });
+
+  const [showAlert, setShowAlert] = useState<boolean>(false);
 
   return (
     <SidebarMenu>
@@ -91,13 +111,33 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => mutate()}>
+            <DropdownMenuItem onClick={() => setShowAlert(true)}>
               <LogOut />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
+      <AlertDialog open={showAlert} onOpenChange={setShowAlert}>
+        <AlertDialogTrigger className="flex"></AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Logging out</AlertDialogTitle>
+            <AlertDialogDescription>
+              are you sure you want to log out from the app?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={() => mutate()}>
+              <LoaderCircle
+                className={`animate-spin ${isPending && "block"} hidden`}
+              />
+              Log me out
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </SidebarMenu>
   );
 }
