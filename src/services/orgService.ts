@@ -1,7 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { axiosInstance } from "~/lib/api/api";
 import orgApi from "~/lib/api/org/org.api";
-import { IOrganization, IUser } from "~/type/httpResponse";
+import { IEvent, IOrganization, IUser } from "~/type/httpResponse";
 import { NewOrgType } from "~/type/org";
 import { MutationOptions, QueryOptions } from "~/type/react-query";
 
@@ -11,9 +10,26 @@ export const orgService = {
       ...options,
       queryKey: ["organization"],
       queryFn() {
-        return axiosInstance.get("/org");
+        return orgApi.getOrg();
       },
       refetchOnWindowFocus: false,
+    });
+  },
+
+  getSingleOrg(
+    { orgId }: { orgId: string },
+    options?: QueryOptions<
+      IOrganization<IUser, IEvent> & { isAdmin: boolean; userId: string }
+    >
+  ) {
+    return useQuery({
+      ...options,
+      queryKey: ["orgDetail", orgId],
+      queryFn() {
+        return orgApi.getSingleOrg(orgId);
+      },
+      refetchOnWindowFocus: false,
+      retry: false,
     });
   },
 
