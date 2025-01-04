@@ -52,6 +52,7 @@ export function NavUser({
   const router = useRouter();
   const { mutate, isPending } = authService.SignOut({
     onSuccess() {
+      router.replace("/");
       router.refresh();
     },
   });
