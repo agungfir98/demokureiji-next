@@ -5,7 +5,7 @@ import { NewOrgType } from "~/type/org";
 import { MutationOptions, QueryOptions } from "~/type/react-query";
 
 export const orgService = {
-  getOrganizations(options?: QueryOptions<IUser<IOrganization>>) {
+  GetOrganizations(options?: QueryOptions<IUser<IOrganization>>) {
     return useQuery({
       ...options,
       queryKey: ["organization"],
@@ -16,7 +16,7 @@ export const orgService = {
     });
   },
 
-  getSingleOrg(
+  GetSingleOrg(
     { orgId }: { orgId: string },
     options?: QueryOptions<
       IOrganization<IUser, IEvent> & { isAdmin: boolean; userId: string }
@@ -33,7 +33,7 @@ export const orgService = {
     });
   },
 
-  newOrganization(options?: MutationOptions<NewOrgType>) {
+  NewOrganization(options?: MutationOptions<NewOrgType>) {
     return useMutation({
       ...options,
       mutationFn(data) {
