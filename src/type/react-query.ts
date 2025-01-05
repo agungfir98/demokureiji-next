@@ -7,6 +7,7 @@ export type MutationOptions<T = void> = Omit<
   "mutationFn"
 >;
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export type QueryOptions<TData = any, TError = any> = Omit<
   UseQueryOptions<
     any,
