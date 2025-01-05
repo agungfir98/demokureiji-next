@@ -41,4 +41,13 @@ export const orgService = {
       },
     });
   },
+
+  NewMember(options?: MutationOptions<{ orgId: string; userId: string }>) {
+    return useMutation({
+      ...options,
+      mutationFn({ userId, orgId }) {
+        return orgApi.newMember({ orgId, userId });
+      },
+    });
+  },
 };

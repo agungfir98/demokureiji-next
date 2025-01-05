@@ -13,6 +13,10 @@ class OrgApi {
   getSingleOrg(orgId: string) {
     return axiosInstance.get(`/org/${orgId}`);
   }
+
+  newMember({ orgId, userId }: { userId: string; orgId: string }) {
+    return axiosInstance.post(`/org/${orgId}/new-member`, { id: userId });
+  }
 }
 
 const orgApi = new OrgApi();

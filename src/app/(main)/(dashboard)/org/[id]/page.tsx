@@ -1,6 +1,7 @@
 "use client";
 import { Plus } from "lucide-react";
 import { useParams } from "next/navigation";
+import { useState } from "react";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import {
@@ -19,11 +20,13 @@ import {
 import { Separator } from "~/components/ui/separator";
 import { orgService } from "~/services/orgService";
 import { IUser } from "~/type/httpResponse";
+import { NewMemberModal } from "./components/NewMemberModal";
 
 const OrgDetail = () => {
   const { id } = useParams();
+  const [showNewMemberModal, setShowNewMemberModal] = useState<boolean>(false);
 
-  const { data } = orgService.getSingleOrg({ orgId: id as string });
+  const { data } = orgService.GetSingleOrg({ orgId: id as string });
 
   return (
     <div className="grid gap-4">
@@ -78,7 +81,7 @@ const OrgDetail = () => {
               <h1 className="text-xl font-semibold">Members</h1>
               {data?.data.data!.isAdmin && (
                 <div className="">
-                  <Button size="sm">
+                  <Button size="sm" onClick={() => setShowNewMemberModal(true)}>
                     <Plus />
                     add member
                   </Button>
@@ -92,26 +95,17 @@ const OrgDetail = () => {
                     const v = member as IUser & { isAdmin: string };
                     return (
                       <li key={index}>
-                        {data?.data.data!.isAdmin ? (
-                          <ContextMenu>
-                            <ContextMenuTrigger className="flex justify-between hover:bg-secondary p-2">
-                              <p>{v.name}</p>
-                              {v.isAdmin && (
-                                <Badge variant="outline">Admin</Badge>
-                              )}
-                            </ContextMenuTrigger>
-                            <ContextMenuContent className="w-64">
-                              <ContextMenuItem>satuaaa</ContextMenuItem>
-                            </ContextMenuContent>
-                          </ContextMenu>
-                        ) : (
-                          <div className="flex justify-between">
-                            <p className="hover:bg-secondary p-2">
-                              {v.name}asu
-                            </p>
-                            {v.isAdmin && <Badge>Admin</Badge>}
-                          </div>
-                        )}
+                        <ContextMenu>
+                          <ContextMenuTrigger className="flex justify-between hover:bg-secondary p-2">
+                            <p>{v.name}</p>
+                            {v.isAdmin && (
+                              <Badge variant="outline">Admin</Badge>
+                            )}
+                          </ContextMenuTrigger>
+                          <ContextMenuContent className="w-64">
+                            <ContextMenuItem>satuaaa</ContextMenuItem>
+                          </ContextMenuContent>
+                        </ContextMenu>
                         <Separator />
                       </li>
                     );
@@ -122,6 +116,10 @@ const OrgDetail = () => {
           </div>
         </CardContent>
       </Card>
+      <NewMemberModal
+        open={showNewMemberModal}
+        onOpenChange={setShowNewMemberModal}
+      />
     </div>
   );
 };
