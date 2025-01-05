@@ -38,7 +38,7 @@ const NewOrganization = () => {
 
   const router = useRouter();
 
-  const { mutate, isPending } = orgService.newOrganization({
+  const { mutate, isPending } = orgService.NewOrganization({
     onSuccess({ data }) {
       toast.success(data.message);
       queryClient.invalidateQueries({ queryKey: ["organization"] });

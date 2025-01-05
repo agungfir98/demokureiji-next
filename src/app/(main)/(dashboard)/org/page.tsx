@@ -9,7 +9,7 @@ import {
 import { orgService } from "~/services/orgService";
 
 const Organizations = () => {
-  const { data } = orgService.getOrganizations();
+  const { data } = orgService.GetOrganizations();
 
   return (
     <div className="grid gap-8">
