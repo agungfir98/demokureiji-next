@@ -9,7 +9,7 @@ export default function useDebouncer<T>(value: T, interval: number): [T] {
     }, interval);
 
     return () => clearTimeout(handler);
-  }, [value]);
+  }, [value, interval]);
 
   return [v];
 }
