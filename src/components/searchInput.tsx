@@ -21,3 +21,4 @@ export const SearchInput = React.forwardRef<
     </div>
   );
 });
+SearchInput.displayName = "SearchInput";
