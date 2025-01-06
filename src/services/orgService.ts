@@ -50,4 +50,31 @@ export const orgService = {
       },
     });
   },
+
+  KickMember(options?: MutationOptions<{ orgId: string; userId: string }>) {
+    return useMutation({
+      ...options,
+      mutationFn({ userId, orgId }) {
+        return orgApi.kickMember({ orgId, userId });
+      },
+    });
+  },
+
+  DemoteAdmin(options?: MutationOptions<{ orgId: string; userId: string }>) {
+    return useMutation({
+      ...options,
+      mutationFn({ userId, orgId }) {
+        return orgApi.demoteAdmin({ orgId, userId });
+      },
+    });
+  },
+
+  PromoteMember(options?: MutationOptions<{ orgId: string; userId: string }>) {
+    return useMutation({
+      ...options,
+      mutationFn({ userId, orgId }) {
+        return orgApi.promoteMember({ orgId, userId });
+      },
+    });
+  },
 };
