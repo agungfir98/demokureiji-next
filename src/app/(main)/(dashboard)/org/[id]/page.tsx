@@ -11,16 +11,11 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuTrigger,
-} from "~/components/ui/context-menu";
 import { Separator } from "~/components/ui/separator";
 import { orgService } from "~/services/orgService";
 import { IUser } from "~/type/httpResponse";
 import { NewMemberModal } from "./components/NewMemberModal";
+import { MemberContextMenu } from "./components/member-context-menu";
 
 const OrgDetail = () => {
   const { id } = useParams();
@@ -92,20 +87,24 @@ const OrgDetail = () => {
               <CardContent className="mt-6 grid">
                 <ul>
                   {data?.data.data?.members.map((member, index) => {
-                    const v = member as IUser & { isAdmin: string };
+                    const v = member as IUser & { isAdmin: boolean };
                     return (
                       <li key={index}>
-                        <ContextMenu>
-                          <ContextMenuTrigger className="flex justify-between hover:bg-secondary p-2">
+                        {data.data.data?.isAdmin ? (
+                          <MemberContextMenu member={v}>
                             <p>{v.name}</p>
                             {v.isAdmin && (
                               <Badge variant="outline">Admin</Badge>
                             )}
-                          </ContextMenuTrigger>
-                          <ContextMenuContent className="w-64">
-                            <ContextMenuItem>satuaaa</ContextMenuItem>
-                          </ContextMenuContent>
-                        </ContextMenu>
+                          </MemberContextMenu>
+                        ) : (
+                          <div className="flex justify-between hover:bg-secondary p-2">
+                            <p>{v.name}</p>
+                            {v.isAdmin && (
+                              <Badge variant="outline">Admin</Badge>
+                            )}
+                          </div>
+                        )}
                         <Separator />
                       </li>
                     );
