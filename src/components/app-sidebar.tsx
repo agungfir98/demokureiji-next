@@ -65,9 +65,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { token } = useAuthStore();
   const decoded: jwt.JwtPayload = jwt.decode(token as string) as jwt.JwtPayload;
   const user = {
-    id: decoded.id,
-    email: decoded.email,
-    name: decoded.name,
+    id: decoded?.id,
+    email: decoded?.email,
+    name: decoded?.name,
   };
 
   return (
