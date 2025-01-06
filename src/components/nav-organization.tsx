@@ -1,42 +1,21 @@
 "use client";
 
-import {
-  Folder,
-  Forward,
-  MoreHorizontal,
-  Plus,
-  Trash2,
-  type LucideIcon,
-} from "lucide-react";
+import { MoreHorizontal, Plus, UsersRound } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
 import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
 } from "~/components/ui/sidebar";
+import { orgService } from "~/services/orgService";
 
-export function NavOrg({
-  organization,
-}: {
-  organization: {
-    name: string;
-    url: string;
-    icon: LucideIcon;
-  }[];
-}) {
-  const { isMobile } = useSidebar();
+export function NavOrg() {
+  const { data } = orgService.GetOrganizations();
+  const [max, setMax] = useState<number>(5);
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
@@ -52,50 +31,43 @@ export function NavOrg({
             </SidebarMenuButton>
           </Link>
         </SidebarMenuItem>
-        {organization.map((item) => (
-          <SidebarMenuItem key={item.name}>
-            <Link href={item.url} passHref>
+        {data?.data.data?.organization.slice(0, max).map((item, index) => (
+          <SidebarMenuItem key={index}>
+            <Link href={`/org/${item._id}`} passHref>
               <SidebarMenuButton asChild>
                 <div>
-                  <item.icon />
-                  <span>{item.name}</span>
+                  <UsersRound />
+                  <span>{item.organization}</span>
                 </div>
               </SidebarMenuButton>
             </Link>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuAction showOnHover>
-                  <MoreHorizontal />
-                  <span className="sr-only">More</span>
-                </SidebarMenuAction>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="w-48 rounded-lg"
-                side={isMobile ? "bottom" : "right"}
-                align={isMobile ? "end" : "start"}
-              >
-                <DropdownMenuItem>
-                  <Folder className="text-slate-500 dark:text-slate-400" />
-                  <span>View Project</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Forward className="text-slate-500 dark:text-slate-400" />
-                  <span>Share Project</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Trash2 className="text-slate-500 dark:text-slate-400" />
-                  <span>Delete Project</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
           </SidebarMenuItem>
         ))}
         <SidebarMenuItem>
-          <SidebarMenuButton className="text-sidebar-foreground/70">
-            <MoreHorizontal className="text-sidebar-foreground/70" />
-            <span>More</span>
-          </SidebarMenuButton>
+          {max === data?.data.data?.organization.length ? (
+            <SidebarMenuButton
+              className="text-sidebar-foreground/70"
+              onClick={() => setMax(5)}
+            >
+              <MoreHorizontal className="text-sidebar-foreground/70" />
+              <span>less</span>
+            </SidebarMenuButton>
+          ) : (
+            <SidebarMenuButton
+              className="text-sidebar-foreground/70"
+              onClick={() => {
+                setMax((max) => {
+                  if (data!.data.data!.organization.length < max + 5) {
+                    return (max += data!.data.data!.organization.length - max);
+                  }
+                  return max + 5;
+                });
+              }}
+            >
+              <MoreHorizontal className="text-sidebar-foreground/70" />
+              <span>More</span>
+            </SidebarMenuButton>
+          )}
         </SidebarMenuItem>
       </SidebarMenu>
     </SidebarGroup>
