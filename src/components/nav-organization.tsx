@@ -57,10 +57,14 @@ export function NavOrg() {
               className="text-sidebar-foreground/70"
               onClick={() => {
                 setMax((max) => {
-                  if (data!.data.data!.organization.length < max + 5) {
-                    return (max += data!.data.data!.organization.length - max);
+                  if (data?.data.data !== undefined) {
+                    if (data.data.data.organization.length < max + 5) {
+                      return (max +=
+                        data!.data.data!.organization.length - max);
+                    }
+                    return max + 5;
                   }
-                  return max + 5;
+                  return max;
                 });
               }}
             >
