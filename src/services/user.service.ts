@@ -5,12 +5,12 @@ import { IUser } from "~/type/httpResponse";
 import { axiosInstance } from "~/lib/api/api";
 
 export const userService = {
-  SearchUser({ email }: { email: string }, options?: QueryOptions<IUser[]>) {
+  SearchUser({ value }: { value: string }, options?: QueryOptions<IUser[]>) {
     return useQuery({
       ...options,
-      queryKey: ["searchUser", email],
+      queryKey: ["searchUser", value],
       queryFn() {
-        return userApi.searchUser({ email });
+        return userApi.searchUser({ value });
       },
       refetchOnWindowFocus: false,
     });

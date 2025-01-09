@@ -17,7 +17,7 @@ import {
 } from "~/components/ui/alert-dialog";
 import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
-import useDebouncer from "~/hooks/useDebouncer";
+import { useDebouncer } from "~/hooks/useDebouncer";
 import { orgService } from "~/services/orgService";
 import { userService } from "~/services/user.service";
 import { IUser } from "~/type/httpResponse";
@@ -28,12 +28,12 @@ export const NewMemberModal: React.FC<{
 }> = (props) => {
   const [searchUser, setSearchUser] = useState<string>("");
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
-  const [email] = useDebouncer(searchUser, 500);
+  const [value] = useDebouncer(searchUser, 500);
   const { id: orgId } = useParams();
 
   const { data: searchData } = userService.SearchUser(
-    { email },
-    { enabled: !!email, queryKey: ["search-user", email] }
+    { value },
+    { enabled: !!value, queryKey: ["search-user", value] }
   );
   const [selected, setSelected] = useState<IUser>();
 
@@ -50,7 +50,6 @@ export const NewMemberModal: React.FC<{
       <AlertDialogContent>
         <AlertDialogTitle>New User</AlertDialogTitle>
         <SearchInput
-          type="search"
           placeholder="search by email"
           value={searchUser}
           onChange={(e) => setSearchUser(e.target.value)}
