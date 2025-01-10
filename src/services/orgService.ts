@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import orgApi from "~/lib/api/org/org.api";
 import { IEvent, IOrganization, IUser } from "~/type/httpResponse";
-import { NewOrgType } from "~/type/org";
+import { NewOrgType, OrgQueryType } from "~/type/org";
 import { MutationOptions, QueryOptions } from "~/type/react-query";
 
 export const orgService = {
@@ -18,15 +18,22 @@ export const orgService = {
 
   GetSingleOrg(
     { orgId }: { orgId: string },
+    params: OrgQueryType,
     options?: QueryOptions<
-      IOrganization<IUser, IEvent> & { isAdmin: boolean; userId: string }
+      IOrganization & {
+        role: IOrganization["members"][0]["role"];
+        userId: string;
+        totalMembers: number;
+        memberSkip: number;
+        memberLimit: number;
+      }
     >
   ) {
     return useQuery({
       ...options,
-      queryKey: ["orgDetail", orgId],
+      queryKey: ["orgDetail", orgId, ...options!.queryKey],
       queryFn() {
-        return orgApi.getSingleOrg(orgId);
+        return orgApi.getSingleOrg(orgId, params);
       },
       refetchOnWindowFocus: false,
       retry: false,

@@ -1,4 +1,4 @@
-import { NewOrgType } from "~/type/org";
+import { NewOrgType, OrgQueryType } from "~/type/org";
 import { axiosInstance } from "../api";
 
 class OrgApi {
@@ -12,6 +12,10 @@ class OrgApi {
 
   getSingleOrg(orgId: string) {
     return axiosInstance.get(`/org/${orgId}`);
+  }
+    return axiosInstance.get(`/org/${orgId}`, {
+      params: { ...params },
+    });
   }
 
   newMember({ orgId, userId }: { userId: string; orgId: string }) {
