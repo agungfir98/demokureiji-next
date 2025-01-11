@@ -20,9 +20,9 @@ import {
   ContextMenuTrigger,
 } from "~/components/ui/context-menu";
 import { orgService } from "~/services/orgService";
-import { IUser } from "~/type/httpResponse";
+import { IOrganization, IUser } from "~/type/httpResponse";
 
-const memberContext = createContext<(IUser & { isAdmin: boolean }) | null>(
+const memberContext = createContext<IOrganization<IUser>["members"][0] | null>(
   null
 );
 
@@ -36,7 +36,7 @@ const useMemberContext = () => {
 };
 
 export const MemberContextMenu: React.FC<
-  PropsWithChildren & { member: IUser & { isAdmin: boolean } }
+  PropsWithChildren & { member: IOrganization<IUser>["members"][0] }
 > = ({ children, member }) => {
   const [alertDialog, setAlertDialog] = useState<{
     open: boolean;
@@ -46,11 +46,9 @@ export const MemberContextMenu: React.FC<
   return (
     <memberContext.Provider value={member}>
       <ContextMenu>
-        <ContextMenuTrigger className="flex justify-between hover:bg-secondary p-2">
-          {children}
-        </ContextMenuTrigger>
+        <ContextMenuTrigger>{children}</ContextMenuTrigger>
         <ContextMenuContent className="w-64">
-          {member.isAdmin ? (
+          {member.role === "admin" ? (
             <ContextMenuItem
               inset
               onClick={() => setAlertDialog({ open: true, action: "demote" })}
@@ -58,12 +56,16 @@ export const MemberContextMenu: React.FC<
               demote from admin
             </ContextMenuItem>
           ) : (
-            <ContextMenuItem
-              inset
-              onClick={() => setAlertDialog({ open: true, action: "promote" })}
-            >
-              set as admin
-            </ContextMenuItem>
+            member.role === "member" && (
+              <ContextMenuItem
+                inset
+                onClick={() =>
+                  setAlertDialog({ open: true, action: "promote" })
+                }
+              >
+                set as admin
+              </ContextMenuItem>
+            )
           )}
           <ContextMenuItem
             inset
@@ -117,14 +119,14 @@ const PromoteAdminDialog = () => {
       <AlertDialogHeader>
         <AlertDialogTitle>Add admin</AlertDialogTitle>
         <AlertDialogDescription>
-          Are you sure to promote {ctx?.name} to be an admin?
+          Are you sure to promote {ctx?.member.name} to be an admin?
         </AlertDialogDescription>
       </AlertDialogHeader>
       <AlertDialogFooter>
         <AlertDialogCancel>Cancel</AlertDialogCancel>
         <AlertDialogAction
           onClick={() => {
-            mutate({ userId: ctx!._id, orgId: orgId as string });
+            mutate({ userId: ctx!.member._id, orgId: orgId as string });
           }}
         >
           <LoaderCircle className={`animate-spin ${!isPending && "hidden"}`} />
@@ -154,14 +156,14 @@ const DemoteAdminDialog = () => {
       <AlertDialogHeader>
         <AlertDialogTitle>Demote an admin</AlertDialogTitle>
         <AlertDialogDescription>
-          Are you sure you want to demote {ctx?.name} from admin?
+          Are you sure you want to demote {ctx?.member.name} from admin?
         </AlertDialogDescription>
       </AlertDialogHeader>
       <AlertDialogFooter>
         <AlertDialogCancel>Cancel</AlertDialogCancel>
         <AlertDialogAction
           onClick={() => {
-            mutate({ userId: ctx!._id, orgId: orgId as string });
+            mutate({ userId: ctx!.member._id, orgId: orgId as string });
           }}
         >
           <LoaderCircle className={`animate-spin ${!isPending && "hidden"}`} />
@@ -191,7 +193,7 @@ const KickMemberDialog = () => {
       <AlertDialogHeader>
         <AlertDialogTitle>kick member</AlertDialogTitle>
         <AlertDialogDescription>
-          kick {ctx?.name} from organization?
+          kick {ctx?.member.name} from organization?
           <br />
           you still can invite them later to organization
         </AlertDialogDescription>
@@ -200,7 +202,7 @@ const KickMemberDialog = () => {
         <AlertDialogCancel>Cancel</AlertDialogCancel>
         <AlertDialogAction
           onClick={() => {
-            mutate({ userId: ctx!._id, orgId: orgId as string });
+            mutate({ userId: ctx!.member._id, orgId: orgId as string });
           }}
         >
           <LoaderCircle className={`animate-spin ${!isPending && "hidden"}`} />
