@@ -43,28 +43,6 @@ export const orgService = {
     });
   },
 
-  GetOrgMember(
-    orgId: string,
-    params: OrgQueryType,
-    options?: QueryOptions<
-      IOrganization & {
-        role: IOrganization["members"][0]["role"];
-        userId: string;
-        totalMembers: number;
-        memberSkip: number;
-        memberLimit: number;
-      }
-    >
-  ) {
-    return useQuery({
-      ...options,
-      queryKey: ["org-member", ...(options?.queryKey ? options.queryKey : [])],
-      queryFn() {
-        return orgApi.getMember(orgId, params);
-      },
-    });
-  },
-
   NewOrganization(options?: MutationOptions<NewOrgType>) {
     return useMutation({
       ...options,
