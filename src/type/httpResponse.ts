@@ -3,7 +3,7 @@ export interface IApiResponse<TData = any, TError = any> {
   success: boolean;
   statusCode: number;
   message: string;
-  data?: TData;
+  data: TData;
   error?: TError;
   timestamp: string;
 }
@@ -21,10 +21,10 @@ export interface IUser<Org = string, Event = string> extends Document {
 export interface IOrganization<User = string, Event = string> extends Document {
   _id: string;
   organization: string;
-  admin: User[];
-  members: User[];
+  members: { member: User; role: "master" | "admin" | "member" }[];
+  paginatedMembers: { member: User; role: "master" | "admin" | "member" }[];
   description: string;
-  voteEvents: Event[];
+  voteevents: Event[];
 }
 
 export interface IEvent<User = string, Org = string> extends Document {
