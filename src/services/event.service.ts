@@ -8,7 +8,7 @@ class EventService {
     return useMutation({
       ...options,
       mutationFn({ orgId, data }) {
-        return eventApi.newEvent({ orgId, data });
+        return eventApi.newEvent(orgId, data);
       },
     });
   }

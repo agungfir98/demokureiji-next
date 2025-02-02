@@ -2,8 +2,12 @@ import { NewEventType } from "~/type/event";
 import { axiosInstance } from "../api";
 
 class EventApi {
-  newEvent({ orgId, data }: { orgId: string; data: NewEventType }) {
-    return axiosInstance.post(`/org/${orgId}/event/new`, data);
+  newEvent(orgId: string, payload: NewEventType) {
+    return axiosInstance.post(`/event/new`, { orgId, ...payload });
+  }
+
+  getEvent({ eventId }: { eventId: string }) {
+    return axiosInstance.get(`/event/${eventId}`);
   }
 }
 

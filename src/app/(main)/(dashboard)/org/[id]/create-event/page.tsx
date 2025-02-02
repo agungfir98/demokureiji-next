@@ -69,9 +69,7 @@ const CreateEventPage = () => {
         <Form {...eventForm}>
           <form
             onSubmit={eventForm.handleSubmit(
-              (data) => {
-                mutate({ orgId: orgId as string, data });
-              },
+              (data) => mutate({ orgId: orgId as string, data }),
               async () => {
                 await eventForm.trigger("candidates");
               }
