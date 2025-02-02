@@ -20,12 +20,15 @@ export const orgService = {
     { orgId }: { orgId: string },
     params: OrgQueryType,
     options?: QueryOptions<
-      IOrganization & {
+      IOrganization<IUser, IEvent> & {
         role: IOrganization["members"][0]["role"];
         userId: string;
-        totalMembers: number;
-        memberSkip: number;
-        memberLimit: number;
+        pagination: {
+          total: number;
+          page: number;
+          limit: number;
+          totalPages: number;
+        };
       }
     >
   ) {
@@ -37,6 +40,28 @@ export const orgService = {
       },
       refetchOnWindowFocus: false,
       retry: false,
+    });
+  },
+
+  GetOrgMember(
+    orgId: string,
+    params: OrgQueryType,
+    options?: QueryOptions<
+      IOrganization & {
+        role: IOrganization["members"][0]["role"];
+        userId: string;
+        totalMembers: number;
+        memberSkip: number;
+        memberLimit: number;
+      }
+    >
+  ) {
+    return useQuery({
+      ...options,
+      queryKey: ["org-member", ...(options?.queryKey ? options.queryKey : [])],
+      queryFn() {
+        return orgApi.getMember(orgId, params);
+      },
     });
   },
 
