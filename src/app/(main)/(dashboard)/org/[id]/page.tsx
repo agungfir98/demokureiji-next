@@ -109,15 +109,13 @@ const OrgDetail = () => {
                         href={`/org/${id}/event/${event._id}`}
                         className="relative"
                       >
-                        <Card>
-                          <CardHeader>
-                            <CardTitle>{event.voteTitle}</CardTitle>
-                            <CardDescription className="flex gap-2 items-center">
-                              <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                              <p>{event.status}</p>
-                            </CardDescription>
-                          </CardHeader>
-                        </Card>
+                        <div className="flex justify-between items-center hover:bg-secondary p-2 rounded-lg">
+                          <p>{event.voteTitle}</p>
+                          <div className="flex gap-2 items-center">
+                            <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                            <p>{event.status}</p>
+                          </div>
+                        </div>
                       </Link>
                     </li>
                   ))}
@@ -157,7 +155,7 @@ const OrgDetail = () => {
                     return (
                       <li key={index}>
                         {data.data.data?.role === "member" ? (
-                          <div className="flex items-center justify-between hover:bg-secondary p-2">
+                          <div className="flex items-center justify-between hover:bg-secondary p-2 rounded-lg">
                             <span className="flex gap-2 items-end">
                               <p>{member.member.name}</p>
                               <p className="text-sm font-thin">
@@ -170,7 +168,7 @@ const OrgDetail = () => {
                           </div>
                         ) : (
                           <MemberContextMenu member={member}>
-                            <div className="flex justify-between items-center hover:bg-secondary p-2">
+                            <div className="flex justify-between items-center hover:bg-secondary p-2 rounded-lg">
                               <span className="flex gap-2 items-center">
                                 <p>{member.member.name}</p>
                                 <p className="text-sm font-thin">
