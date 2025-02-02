@@ -10,9 +10,7 @@ class OrgApi {
     return axiosInstance.get("/org");
   }
 
-  getSingleOrg(orgId: string) {
-    return axiosInstance.get(`/org/${orgId}`);
-  }
+  getSingleOrg(orgId: string, params: OrgQueryType) {
     return axiosInstance.get(`/org/${orgId}`, {
       params: { ...params },
     });
