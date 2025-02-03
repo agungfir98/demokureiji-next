@@ -4,6 +4,7 @@ import React, { PropsWithChildren, ReactNode } from "react";
 
 import { AppSidebar } from "~/components/app-sidebar";
 import DynamicBreadCrumb from "~/components/dynamic-breadcrumb";
+import { Card } from "~/components/ui/card";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import { Separator } from "~/components/ui/separator";
 import {
@@ -30,7 +31,9 @@ const DashboardLayout: React.FC<PropsWithChildren & { modal: ReactNode }> = ({
           </header>
           <div className="flex-grow gap-4 pt-0 bg-background overflow-hidden">
             <ScrollArea className="h-full overflow-auto px-4 ">
-              {children}
+              <div className="grid gap-4">
+                <Card>{children}</Card>
+              </div>
               {modal}
             </ScrollArea>
           </div>
