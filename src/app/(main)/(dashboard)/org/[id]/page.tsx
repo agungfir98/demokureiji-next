@@ -35,6 +35,7 @@ import { orgService } from "~/services/orgService";
 import { OrgQueryType } from "~/type/org";
 import { NewMemberModal } from "./components/NewMemberModal";
 import { MemberContextMenu } from "./components/member-context-menu";
+import { EventStatus } from "~/components/event-activity-status";
 
 const OrgDetail = () => {
   const { id } = useParams();
@@ -111,10 +112,7 @@ const OrgDetail = () => {
                       >
                         <div className="flex justify-between items-center hover:bg-secondary p-2 rounded-lg">
                           <p>{event.voteTitle}</p>
-                          <div className="flex gap-2 items-center">
-                            <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                            <p>{event.status}</p>
-                          </div>
+                          <EventStatus status={event.status} />
                         </div>
                       </Link>
                     </li>
