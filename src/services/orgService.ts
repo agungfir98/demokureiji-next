@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import orgApi from "~/lib/api/org/org.api";
 import { IEvent, IOrganization, IUser } from "~/type/httpResponse";
 import { NewOrgType, OrgQueryType } from "~/type/org";
@@ -6,7 +6,7 @@ import { MutationOptions, QueryOptions } from "~/type/react-query";
 
 export const orgService = {
   GetOrganizations(options?: QueryOptions<IUser<IOrganization>>) {
-    return useQuery({
+    return useSuspenseQuery({
       ...options,
       queryKey: ["organization"],
       queryFn() {
@@ -32,7 +32,7 @@ export const orgService = {
       }
     >
   ) {
-    return useQuery({
+    return useSuspenseQuery({
       ...options,
       queryKey: ["orgDetail", orgId, ...options!.queryKey],
       queryFn() {

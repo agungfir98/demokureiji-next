@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { QueryOptions } from "~/type/react-query";
 import userApi from "~/lib/api/user/user.api";
 import { IUser } from "~/type/httpResponse";
@@ -6,7 +6,7 @@ import { axiosInstance } from "~/lib/api/api";
 
 export const userService = {
   SearchUser({ value }: { value: string }, options?: QueryOptions<IUser[]>) {
-    return useQuery({
+    return useSuspenseQuery({
       ...options,
       queryKey: ["searchUser", value],
       queryFn() {
@@ -17,7 +17,7 @@ export const userService = {
   },
 
   GetUser({ userId }: { userId: string }, options?: QueryOptions) {
-    return useQuery({
+    return useSuspenseQuery({
       ...options,
       queryKey: ["user", userId],
       queryFn() {
