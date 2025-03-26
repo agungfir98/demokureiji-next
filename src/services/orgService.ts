@@ -1,7 +1,16 @@
-import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import orgApi from "~/lib/api/org/org.api";
-import { IEvent, IOrganization, IUser } from "~/type/httpResponse";
-import { NewOrgType, OrgQueryType } from "~/type/org";
+import {
+  IOrganization,
+  IUser,
+  PaginatedEvents,
+  PaginatedMembers,
+} from "~/type/httpResponse";
+import {
+  NewOrgType,
+  OrgMemberQueryType,
+  PaginationQueryType,
+} from "~/type/org";
 import { MutationOptions, QueryOptions } from "~/type/react-query";
 
 export const orgService = {
@@ -18,25 +27,49 @@ export const orgService = {
 
   GetSingleOrg(
     { orgId }: { orgId: string },
-    params: OrgQueryType,
     options?: QueryOptions<
-      IOrganization<IUser, IEvent> & {
-        role: IOrganization["members"][0]["role"];
-        userId: string;
-        pagination: {
-          total: number;
-          page: number;
-          limit: number;
-          totalPages: number;
-        };
-      }
+      Pick<IOrganization, "organization" | "_id" | "description"> &
+        Pick<IOrganization["members"][0], "role">
     >
   ) {
-    return useQuery({
+    return useSuspenseQuery({
       ...options,
-      queryKey: ["orgDetail", orgId, ...options!.queryKey],
+      queryKey: ["org-detail", orgId],
       queryFn() {
-        return orgApi.getSingleOrg(orgId, params);
+        console.log("checkpoint!");
+        return orgApi.getSingleOrg(orgId);
+      },
+      refetchOnWindowFocus: false,
+      retry: false,
+    });
+  },
+
+  GetOrgMembers(
+    { orgId }: { orgId: string },
+    { params }: { params: OrgMemberQueryType },
+    options?: QueryOptions<PaginatedMembers>
+  ) {
+    return useSuspenseQuery({
+      ...options,
+      queryKey: ["org-members", orgId, ...options!.queryKey],
+      queryFn() {
+        return orgApi.getOrgMembers(orgId, params);
+      },
+      refetchOnWindowFocus: false,
+      retry: false,
+    });
+  },
+
+  GetOrgEvents(
+    { orgId }: { orgId: string },
+    { params }: { params: PaginationQueryType },
+    options?: QueryOptions<PaginatedEvents>
+  ) {
+    return useSuspenseQuery({
+      ...options,
+      queryKey: ["org-events", orgId, ...options!.queryKey],
+      queryFn() {
+        return orgApi.getOrgEvents(orgId, params);
       },
       refetchOnWindowFocus: false,
       retry: false,

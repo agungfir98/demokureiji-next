@@ -8,6 +8,29 @@ export interface IApiResponse<TData = any, TError = any> {
   timestamp: string;
 }
 
+export type OrgMember = Pick<
+  IUser & { role: string },
+  "name" | "email" | "_id" | "role"
+>[];
+
+export interface PaginatedMembers {
+  members: OrgMember;
+  pagination: PaginatedResponse & { totalMembers: number };
+}
+
+export interface PaginatedEvents {
+  events: Pick<IEvent, "_id" | "voteTitle" | "isActive" | "status">[];
+  pagination: PaginatedResponse & { totalMembers: number };
+}
+
+export interface PaginatedResponse {
+  totalPages: number;
+  currentPage: number;
+  limit: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+}
+
 export interface IUser<Org = string, Event = string> extends Document {
   _id: string;
   email: string;
@@ -34,6 +57,17 @@ export interface IEvent<User = string, Org = string> extends Document {
   isActive: boolean;
   status: "inactive" | "active" | "finished";
   finishedDate: Date;
-  candidates: User[];
-  registeredVoters: User[];
+  candidates: ICandidate[];
+  registeredVoters: {
+    voter: User;
+    hasVoted: boolean;
+  }[];
+}
+
+export interface ICandidate {
+  calonKetua: string;
+  calonWakil: string;
+  description: string;
+  numOfVotes: number;
+  _id: string;
 }

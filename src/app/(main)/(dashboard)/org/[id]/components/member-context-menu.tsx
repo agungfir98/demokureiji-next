@@ -20,11 +20,9 @@ import {
   ContextMenuTrigger,
 } from "~/components/ui/context-menu";
 import { orgService } from "~/services/orgService";
-import { IOrganization, IUser } from "~/type/httpResponse";
+import { IOrganization, IUser, OrgMember } from "~/type/httpResponse";
 
-const memberContext = createContext<IOrganization<IUser>["members"][0] | null>(
-  null
-);
+const memberContext = createContext<OrgMember[0] | null>(null);
 
 const useMemberContext = () => {
   const context = useContext(memberContext);
@@ -36,7 +34,7 @@ const useMemberContext = () => {
 };
 
 export const MemberContextMenu: React.FC<
-  PropsWithChildren & { member: IOrganization<IUser>["members"][0] }
+  PropsWithChildren & { member: OrgMember[0] }
 > = ({ children, member }) => {
   const [alertDialog, setAlertDialog] = useState<{
     open: boolean;
@@ -119,14 +117,14 @@ const PromoteAdminDialog = () => {
       <AlertDialogHeader>
         <AlertDialogTitle>Add admin</AlertDialogTitle>
         <AlertDialogDescription>
-          Are you sure to promote {ctx?.member.name} to be an admin?
+          Are you sure to promote {ctx?.name} to be an admin?
         </AlertDialogDescription>
       </AlertDialogHeader>
       <AlertDialogFooter>
         <AlertDialogCancel>Cancel</AlertDialogCancel>
         <AlertDialogAction
           onClick={() => {
-            mutate({ userId: ctx!.member._id, orgId: orgId as string });
+            mutate({ userId: ctx!._id, orgId: orgId as string });
           }}
         >
           <LoaderCircle className={`animate-spin ${!isPending && "hidden"}`} />
@@ -156,14 +154,14 @@ const DemoteAdminDialog = () => {
       <AlertDialogHeader>
         <AlertDialogTitle>Demote an admin</AlertDialogTitle>
         <AlertDialogDescription>
-          Are you sure you want to demote {ctx?.member.name} from admin?
+          Are you sure you want to demote {ctx?.name} from admin?
         </AlertDialogDescription>
       </AlertDialogHeader>
       <AlertDialogFooter>
         <AlertDialogCancel>Cancel</AlertDialogCancel>
         <AlertDialogAction
           onClick={() => {
-            mutate({ userId: ctx!.member._id, orgId: orgId as string });
+            mutate({ userId: ctx!._id, orgId: orgId as string });
           }}
         >
           <LoaderCircle className={`animate-spin ${!isPending && "hidden"}`} />
@@ -193,7 +191,7 @@ const KickMemberDialog = () => {
       <AlertDialogHeader>
         <AlertDialogTitle>kick member</AlertDialogTitle>
         <AlertDialogDescription>
-          kick {ctx?.member.name} from organization?
+          kick {ctx?.name} from organization?
           <br />
           you still can invite them later to organization
         </AlertDialogDescription>
@@ -202,7 +200,7 @@ const KickMemberDialog = () => {
         <AlertDialogCancel>Cancel</AlertDialogCancel>
         <AlertDialogAction
           onClick={() => {
-            mutate({ userId: ctx!.member._id, orgId: orgId as string });
+            mutate({ userId: ctx!._id, orgId: orgId as string });
           }}
         >
           <LoaderCircle className={`animate-spin ${!isPending && "hidden"}`} />

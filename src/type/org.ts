@@ -7,16 +7,22 @@ export const newOrgSchema = z.object({
 
 export type NewOrgType = z.infer<typeof newOrgSchema>;
 
-export const orgQuerySchema = z.object({
-  memberLimit: z
+export const searchQuerySchema = z.object({
+  search: z.string().optional(),
+});
+
+export const paginationQuerySchema = z.object({
+  limit: z
     .string()
     .default("5")
     .transform((v) => Number(v)),
-  memberPage: z
+  page: z
     .string()
     .default("1")
     .transform((v) => Number(v)),
-  searchMember: z.string().optional(),
 });
+export type PaginationQueryType = z.infer<typeof paginationQuerySchema>;
 
-export type OrgQueryType = z.infer<typeof orgQuerySchema>;
+export const orgMemberQuerySchema =
+  paginationQuerySchema.merge(searchQuerySchema);
+export type OrgMemberQueryType = z.infer<typeof orgMemberQuerySchema>;

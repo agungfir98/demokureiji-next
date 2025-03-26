@@ -1,4 +1,8 @@
-import { NewOrgType, OrgQueryType } from "~/type/org";
+import {
+    NewOrgType,
+    OrgMemberQueryType,
+    PaginationQueryType,
+} from "~/type/org";
 import { axiosInstance } from "../api";
 
 class OrgApi {
@@ -10,8 +14,18 @@ class OrgApi {
     return axiosInstance.get("/org");
   }
 
-  getSingleOrg(orgId: string, params: OrgQueryType) {
-    return axiosInstance.get(`/org/${orgId}`, {
+  getSingleOrg(orgId: string) {
+    return axiosInstance.get(`/org/${orgId}`);
+  }
+
+  getOrgMembers(orgId: string, params: OrgMemberQueryType) {
+    return axiosInstance.get(`/org/${orgId}/members`, {
+      params: { ...params },
+    });
+  }
+
+  getOrgEvents(orgId: string, params: PaginationQueryType) {
+    return axiosInstance.get(`/org/${orgId}/events`, {
       params: { ...params },
     });
   }
