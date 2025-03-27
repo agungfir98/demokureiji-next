@@ -1,25 +1,22 @@
 "use client";
-import React, { Suspense, useState } from "react";
+import { useParams } from "next/navigation";
+import { Suspense, useState } from "react";
 import { SearchInput } from "~/components/searchInput";
+import { Badge } from "~/components/ui/badge";
 import {
   Card,
   CardContent,
-  CardHeader,
   CardFooter,
+  CardHeader,
 } from "~/components/ui/card";
 import {
   Pagination,
   PaginationContent,
   PaginationItem,
-  PaginationPrevious,
   PaginationLink,
   PaginationNext,
+  PaginationPrevious,
 } from "~/components/ui/pagination";
-import { MemberContextMenu } from "./member-context-menu";
-import { useParams } from "next/navigation";
-import { orgService } from "~/services/orgService";
-import { OrgMemberQueryType } from "~/type/org";
-import { useDebouncedCallback } from "~/hooks/useDebouncer";
 import {
   Select,
   SelectContent,
@@ -28,8 +25,10 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { Separator } from "~/components/ui/separator";
-import { Badge } from "~/components/ui/badge";
-import { Skeleton } from "~/components/ui/skeleton";
+import { useDebouncedCallback } from "~/hooks/useDebouncer";
+import { orgService } from "~/services/orgService";
+import { OrgMemberQueryType } from "~/type/org";
+import { MemberContextMenu } from "./member-context-menu";
 
 export const MemberList = () => {
   const { id } = useParams();
