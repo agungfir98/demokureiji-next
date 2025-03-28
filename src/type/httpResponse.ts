@@ -71,3 +71,19 @@ export interface ICandidate {
   numOfVotes: number;
   _id: string;
 }
+
+export type EventDetail = IApiResponse<
+  Omit<IEvent<undefined, IOrganization<string, string>>, "registeredVoters"> & {
+    member: string;
+    role: IOrganization["members"][0]["role"];
+  },
+  any
+>;
+
+export type PaginatedVoters = IApiResponse<{
+  voters: Pick<
+    IUser & { hasVoted: boolean },
+    "_id" | "name" | "email" | "hasVoted"
+  >[];
+  pagination: PaginatedResponse & { totalVoters: number };
+}>;
