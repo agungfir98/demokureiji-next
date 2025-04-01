@@ -78,7 +78,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <ScrollArea>
           <NavMain items={data.navMain} />
-          <NavOrg organization={data.organizations} />
+          <NavOrg />
         </ScrollArea>
       </SidebarContent>
       <SidebarFooter>
