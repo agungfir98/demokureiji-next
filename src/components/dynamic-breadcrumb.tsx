@@ -9,6 +9,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "./ui/breadcrumb";
+import Link from "next/link";
 
 const DynamicBreadCrumb = () => {
   const pathName = usePathname();
@@ -36,7 +37,9 @@ const DynamicBreadCrumb = () => {
                 {last ? (
                   <BreadcrumbPage>{segment}</BreadcrumbPage>
                 ) : (
-                  <BreadcrumbLink href={`/${href}`}>{segment}</BreadcrumbLink>
+                  <BreadcrumbLink asChild>
+                    <Link href={`/${href}`}>{segment}</Link>
+                  </BreadcrumbLink>
                 )}
               </BreadcrumbItem>
             </Fragment>
