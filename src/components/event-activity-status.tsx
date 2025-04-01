@@ -1,3 +1,4 @@
+import { cn } from "~/lib/utils";
 import { IEvent } from "~/type/httpResponse";
 
 const condition: Record<IEvent["status"], string> = {
@@ -6,12 +7,14 @@ const condition: Record<IEvent["status"], string> = {
   finished: "bg-slate-500",
 };
 
-export const EventStatus: React.FC<{ status: IEvent["status"] }> = ({
+export const EventStatus: React.FC<{ status?: IEvent["status"] }> = ({
   status,
 }) => {
   return (
     <span className="flex gap-2 items-center">
-      <div className={`w-2 h-2 rounded-full ${condition[status]}`}></div>
+      <div
+        className={cn("w-2 h-2 rounded-full", condition[status ?? "inactive"])}
+      ></div>
       <p>{status}</p>
     </span>
   );
