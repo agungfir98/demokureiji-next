@@ -20,7 +20,7 @@ import {
   ContextMenuTrigger,
 } from "~/components/ui/context-menu";
 import { orgService } from "~/services/orgService";
-import { IOrganization, IUser, OrgMember } from "~/type/httpResponse";
+import { OrgMember } from "~/type/httpResponse";
 
 const memberContext = createContext<OrgMember[0] | null>(null);
 
