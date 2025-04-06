@@ -31,7 +31,7 @@ export function NavOrg() {
             </SidebarMenuButton>
           </Link>
         </SidebarMenuItem>
-        {data?.data.data?.organization.slice(0, max).map((item, index) => (
+        {data?.organization.slice(0, max).map((item, index) => (
           <SidebarMenuItem key={index}>
             <Link href={`/org/${item._id}`} passHref>
               <SidebarMenuButton asChild>
@@ -44,7 +44,7 @@ export function NavOrg() {
           </SidebarMenuItem>
         ))}
         <SidebarMenuItem>
-          {max === data?.data.data?.organization.length ? (
+          {max === data?.organization.length ? (
             <SidebarMenuButton
               className="text-sidebar-foreground/70"
               onClick={() => setMax(5)}
@@ -57,10 +57,9 @@ export function NavOrg() {
               className="text-sidebar-foreground/70"
               onClick={() => {
                 setMax((max) => {
-                  if (data?.data.data !== undefined) {
-                    if (data.data.data.organization.length < max + 5) {
-                      return (max +=
-                        data!.data.data!.organization.length - max);
+                  if (data !== undefined) {
+                    if (data.organization.length < max + 5) {
+                      return (max += data.organization.length - max);
                     }
                     return max + 5;
                   }
