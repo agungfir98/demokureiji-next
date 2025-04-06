@@ -5,7 +5,7 @@ import { cn } from "~/lib/utils";
 export const SearchInput = React.forwardRef<
   HTMLInputElement,
   React.ComponentProps<"input">
->(({ className, type, ...props }, ref) => {
+>(({ className, ...props }, ref) => {
   return (
     <div className="flex items-center border-b px-3">
       <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />

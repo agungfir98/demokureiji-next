@@ -57,9 +57,6 @@ const CreateEventPage = () => {
     },
   });
 
-  if (eventForm.formState.errors.candidates?.message) {
-  }
-
   return (
     <div>
       <Card>
