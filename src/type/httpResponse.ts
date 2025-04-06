@@ -89,3 +89,7 @@ export type PaginatedVoters = IApiResponse<{
   >[];
   pagination: PaginatedResponse & { totalVoters: number };
 }>;
+
+export type UserOrgs = IApiResponse<{
+  organization: Pick<IOrganization, "organization" | "_id" | "description">[];
+}>;
