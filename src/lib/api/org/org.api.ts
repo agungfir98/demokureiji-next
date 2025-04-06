@@ -1,8 +1,7 @@
-import {
-    NewOrgType,
-    OrgMemberQueryType,
-    PaginationQueryType,
-} from "~/type/org";
+import { isAxiosError } from "axios";
+import { UserOrgs } from "~/type/httpResponse";
+import { NewOrgType, OrgMemberQueryType } from "~/type/org";
+import { PaginationQueryType } from "~/type/query";
 import { axiosInstance } from "../api";
 
 class OrgApi {
@@ -10,8 +9,21 @@ class OrgApi {
     return axiosInstance.post("/org/new", data);
   }
 
-  getOrg() {
-    return axiosInstance.get("/org");
+  async getUserOrg() {
+    try {
+      const data = await axiosInstance.get<UserOrgs>("/org");
+      return data.data.data;
+    } catch (error) {
+      if (isAxiosError(error)) {
+        switch (error.status) {
+          case 404:
+            console.log({ status: error.status, data: error.response?.data });
+          default:
+            throw error;
+        }
+      }
+      throw error;
+    }
   }
 
   getSingleOrg(orgId: string) {

@@ -1,27 +1,21 @@
-import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import orgApi from "~/lib/api/org/org.api";
 import {
   IOrganization,
-  IUser,
   PaginatedEvents,
   PaginatedMembers,
 } from "~/type/httpResponse";
-import {
-  NewOrgType,
-  OrgMemberQueryType,
-  PaginationQueryType,
-} from "~/type/org";
+import { NewOrgType, OrgMemberQueryType } from "~/type/org";
+import { PaginationQueryType } from "~/type/query";
 import { MutationOptions, QueryOptions } from "~/type/react-query";
 
 export const orgService = {
-  GetOrganizations(options?: QueryOptions<IUser<IOrganization>>) {
-    return useSuspenseQuery({
-      ...options,
+  GetOrganizations() {
+    return useQuery({
       queryKey: ["organization"],
-      queryFn() {
-        return orgApi.getOrg();
-      },
+      queryFn: () => orgApi.getUserOrg(),
       refetchOnWindowFocus: false,
+      retry: false,
     });
   },
 
@@ -36,7 +30,6 @@ export const orgService = {
       ...options,
       queryKey: ["org-detail", orgId],
       queryFn() {
-        console.log("checkpoint!");
         return orgApi.getSingleOrg(orgId);
       },
       refetchOnWindowFocus: false,
