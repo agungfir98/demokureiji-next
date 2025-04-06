@@ -48,6 +48,8 @@ export interface IOrganization<User = string, Event = string> extends Document {
   paginatedMembers: { member: User; role: "master" | "admin" | "member" }[];
   description: string;
   voteevents: Event[];
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface IEvent<User = string, Org = string> extends Document {
