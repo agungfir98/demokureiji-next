@@ -18,13 +18,13 @@ const Organizations = () => {
         <h1 className="text-xl font-semibold">organization</h1>
       </CardHeader>
       <CardContent>
-        {data?.data.data?.organization.length === 0 && (
+        {data?.organization.length === 0 && (
           <div className="opacity-65 w-fit mx-auto my-10">
             You are currently not part of any organization
           </div>
         )}
         <ul className="grid gap-4">
-          {data?.data.data?.organization.map((org, index) => (
+          {data?.organization.map((org, index) => (
             <li key={index}>
               <Link href={`/org/${org._id}`} className="h-fit w-fit">
                 <Card className="hover:bg-secondary">
