@@ -3,7 +3,7 @@ import { PropsWithChildren } from "react";
 
 const ROLE_HIERARCHY = {
   ADMIN: ["MASTER", "ADMIN"],
-  MEMBER: ["MEMBER"],
+  MEMBER: ["MEMBER", "ADMIN"],
 } as const;
 
 type Role = keyof typeof ROLE_HIERARCHY;
