@@ -7,9 +7,11 @@ const condition: Record<IEvent["status"], string> = {
   finished: "bg-slate-500",
 };
 
-export const EventStatus: React.FC<{ status?: IEvent["status"] }> = ({
+export const EventStatus: React.FC<{ status: IEvent["status"] }> = ({
   status,
 }) => {
+  if (!status) return null;
+
   return (
     <span className="flex gap-2 items-center">
       <div
