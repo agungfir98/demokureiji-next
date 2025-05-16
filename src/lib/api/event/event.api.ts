@@ -1,13 +1,57 @@
-import { NewEventType } from "~/type/event";
+import { NewEventType, VotersQueryType } from "~/type/event";
+import { EventDetail, IEvent, PaginatedVoters } from "~/type/httpResponse";
 import { axiosInstance } from "../api";
+import { isAxiosError } from "axios";
 
 class EventApi {
   newEvent(orgId: string, payload: NewEventType) {
     return axiosInstance.post(`/event/new`, { orgId, ...payload });
   }
 
-  getEvent({ eventId }: { eventId: string }) {
-    return axiosInstance.get(`/event/${eventId}`);
+  async getEvent(
+    { eventId }: { eventId: string },
+    { params }: { params: { orgId: string } }
+  ) {
+    try {
+      const response = await axiosInstance.get<EventDetail>(
+        `/event/${eventId}`,
+        { params }
+      );
+      return response.data.data;
+    } catch (error) {
+      if (isAxiosError(error)) {
+        throw error;
+      }
+    }
+  }
+
+  getEventVoters(
+    { eventId }: { eventId: string },
+    { params }: { params: VotersQueryType & { orgId: string } }
+  ) {
+    return axiosInstance.get<PaginatedVoters>(`/event/${eventId}/voters`, {
+      params,
+    });
+  }
+
+  async updateEvent({
+    orgId,
+    eventId,
+    status,
+  }: {
+    eventId: string;
+    orgId: string;
+    status: IEvent["status"];
+  }) {
+    try {
+      return await axiosInstance.put(
+        `/event/${eventId}`,
+        {},
+        { params: { orgId, status } }
+      );
+    } catch (error) {
+      throw error;
+    }
   }
 }
 

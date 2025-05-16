@@ -1,10 +1,16 @@
-import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
+import {
+  QueryKey,
+  useMutation,
+  useQuery,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
+import { queryClient } from "~/components/query-provider";
 import eventApi from "~/lib/api/event/event.api";
-import { NewEventType } from "~/type/event";
-import { IEvent, IOrganization, IUser } from "~/type/httpResponse";
-import { MutationOptions, QueryOptions } from "~/type/react-query";
+import { NewEventType, VotersQueryType } from "~/type/event";
+import { IEvent } from "~/type/httpResponse";
+import { MutationOptions } from "~/type/react-query";
 
-class EventService {
+const eventService = {
   NewEvent(options?: MutationOptions<{ orgId: string; data: NewEventType }>) {
     return useMutation({
       ...options,
@@ -12,23 +18,47 @@ class EventService {
         return eventApi.newEvent(orgId, data);
       },
     });
-  }
+  },
 
-  GetEvent(
-    eventId: string,
-    options?: QueryOptions<IEvent<IUser, IOrganization>>
+  GetEvent(eventId: string, params: { orgId: string }, queryKey?: string[]) {
+    return useQuery({
+      queryKey: ["event-detail", queryKey],
+      queryFn: async () => eventApi.getEvent({ eventId }, { params }),
+      refetchOnWindowFocus: false,
+      retry: false,
+    });
+  },
+
+  GetEventVoters(
+    { eventId, orgId }: { eventId: string; orgId: string },
+    params: VotersQueryType,
+    queryKey: QueryKey
   ) {
     return useSuspenseQuery({
-      ...options,
-      queryKey: ["event-detail", options?.queryKey],
-      queryFn() {
-        return eventApi.getEvent({ eventId });
+      queryKey: ["event-voters", ...queryKey],
+      queryFn: async () => {
+        const data = await eventApi.getEventVoters(
+          { eventId },
+          { params: { ...params, orgId } }
+        );
+        return data.data;
       },
       refetchOnWindowFocus: false,
       retry: false,
     });
-  }
-}
+  },
 
-const eventService = new EventService();
+  UpdateEventStatus(orgId: string, eventId: string) {
+    return useMutation({
+      mutationKey: ["event-start"],
+      mutationFn: ({ status }: { status: IEvent["status"] }) =>
+        eventApi.updateEvent({ orgId, eventId, status }),
+      onSuccess() {
+        queryClient.invalidateQueries({ queryKey: ["event-detail"] });
+      },
+      retry: false,
+    });
+  },
+};
+
 export default eventService;
