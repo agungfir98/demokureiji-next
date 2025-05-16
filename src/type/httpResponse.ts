@@ -52,7 +52,7 @@ export interface IOrganization<User = string, Event = string> extends Document {
   updatedAt: Date;
 }
 
-export interface IEvent<User = string, Org = string> extends Document {
+export interface IEvent<User = string, Org = string> {
   _id: string;
   voteTitle: string;
   holder: Org;
@@ -75,11 +75,7 @@ export interface ICandidate {
 }
 
 export type EventDetail = IApiResponse<
-  Omit<IEvent<undefined, IOrganization<string, string>>, "registeredVoters"> & {
-    member: string;
-    role: IOrganization["members"][0]["role"];
-  },
-  any
+  IEvent & { role: IOrganization["members"][0]["role"] }
 >;
 
 export type PaginatedVoters = IApiResponse<{
