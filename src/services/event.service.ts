@@ -59,6 +59,18 @@ const eventService = {
       retry: false,
     });
   },
+
+  Vote(options?: MutationOptions<{ orgId: string, eventId: string, candidateId: string }>) {
+    return useMutation({
+      ...options,
+      mutationFn: ({ orgId, candidateId, eventId }) => {
+        return eventApi.vote({ eventId, candidateId }, { params: { orgId } });
+      },
+      onSuccess() {
+        queryClient.invalidateQueries({ queryKey: ["event-detail"] })
+      },
+    })
+  }
 };
 
 export default eventService;

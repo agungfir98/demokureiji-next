@@ -1,7 +1,7 @@
+import { isAxiosError } from "axios";
 import { NewEventType, VotersQueryType } from "~/type/event";
 import { EventDetail, IEvent, PaginatedVoters } from "~/type/httpResponse";
 import { axiosInstance } from "../api";
-import { isAxiosError } from "axios";
 
 class EventApi {
   newEvent(orgId: string, payload: NewEventType) {
@@ -51,6 +51,14 @@ class EventApi {
       );
     } catch (error) {
       throw error;
+    }
+  }
+
+  async vote({ eventId, candidateId }: { eventId: string, candidateId: string }, { params }: { params: { orgId: string } }) {
+    try {
+      return await axiosInstance.post(`/event/${eventId}/vote`, { candidateId }, { params })
+    } catch (error) {
+      throw error
     }
   }
 }
