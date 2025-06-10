@@ -1,8 +1,10 @@
 "use client";
+import { useIsFetching } from "@tanstack/react-query";
 import { ThemeProvider } from "next-themes";
 import React, { PropsWithChildren, ReactNode } from "react";
 
 import { AppSidebar } from "~/components/app-sidebar";
+import CardSkeleton from "~/components/card-skeleton";
 import DynamicBreadCrumb from "~/components/dynamic-breadcrumb";
 import { Card } from "~/components/ui/card";
 import { ScrollArea } from "~/components/ui/scroll-area";
@@ -17,6 +19,7 @@ const DashboardLayout: React.FC<PropsWithChildren & { modal: ReactNode }> = ({
   children,
   modal,
 }) => {
+  const isFetching = useIsFetching();
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <SidebarProvider>
@@ -32,6 +35,7 @@ const DashboardLayout: React.FC<PropsWithChildren & { modal: ReactNode }> = ({
           <div className="flex-grow gap-4 pt-0 bg-background overflow-hidden">
             <ScrollArea className="h-full overflow-auto px-4 ">
               <div className="grid gap-4">
+                {isFetching && <CardSkeleton />}
                 <Card>{children}</Card>
               </div>
               {modal}

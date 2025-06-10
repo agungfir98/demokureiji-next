@@ -20,9 +20,9 @@ const eventService = {
     });
   },
 
-  GetEvent(eventId: string, params: { orgId: string }, queryKey?: string[]) {
+  GetEvent(eventId: string, params: { orgId: string }) {
     return useQuery({
-      queryKey: ["event-detail", queryKey],
+      queryKey: ["event-detail"],
       queryFn: async () => eventApi.getEvent({ eventId }, { params }),
       refetchOnWindowFocus: false,
       retry: false,

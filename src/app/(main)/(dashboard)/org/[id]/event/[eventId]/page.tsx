@@ -26,17 +26,19 @@ const EventDetail = () => {
             <EventStatus status={event?.status!} />
           </div>
           <div className="flex gap-2">
-            <RoleBaseRenderer requiredRole="MEMBER" userRole={event?.role!}>
-              <Button
-                size="sm"
-                role="link"
-                onClick={() =>
-                  router.push(`/org/${orgId}/event/${eventId}/vote`)
-                }
-              >
-                vote
-              </Button>
-            </RoleBaseRenderer>
+            {!event?.hasVoted && (
+              <RoleBaseRenderer requiredRole="MEMBER" userRole={event?.role!}>
+                <Button
+                  size="sm"
+                  role="link"
+                  onClick={() =>
+                    router.push(`/org/${orgId}/event/${eventId}/vote`)
+                  }
+                >
+                  vote
+                </Button>
+              </RoleBaseRenderer>
+            )}
             <RoleBaseRenderer requiredRole="ADMIN" userRole={event?.role!}>
               <StatusButton status={event?.status!} />
             </RoleBaseRenderer>

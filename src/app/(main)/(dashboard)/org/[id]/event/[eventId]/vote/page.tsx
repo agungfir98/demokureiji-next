@@ -34,7 +34,7 @@ const VotePage = () => {
     onSuccess: ({ data }) => {
       console.log({ data });
       toast.success(data.message);
-      queryClient.invalidateQueries({ queryKey: ["event-detail"] });
+      queryClient.invalidateQueries({ queryKey: [eventId] });
       return router.back();
     },
   });

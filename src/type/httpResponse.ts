@@ -75,7 +75,7 @@ export interface ICandidate {
 }
 
 export type EventDetail = IApiResponse<
-  IEvent & { role: IOrganization["members"][0]["role"] }
+  IEvent & { role: IOrganization["members"][0]["role"]; hasVoted: boolean }
 >;
 
 export type PaginatedVoters = IApiResponse<{
