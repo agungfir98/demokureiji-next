@@ -1,8 +1,9 @@
 "use client";
 import { CheckIcon, LoaderCircle } from "lucide-react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import { queryClient } from "~/components/query-provider";
 import { Button } from "~/components/ui/button";
 import {
   Card,
@@ -16,6 +17,7 @@ import { cn } from "~/lib/utils";
 import eventService from "~/services/event.service";
 
 const VotePage = () => {
+  const router = useRouter();
   const { eventId, id: orgId } = useParams<{ eventId: string; id: string }>();
   const [selected, setSelected] = useState<{ candidateId: string | null }>({
     candidateId: null,
@@ -26,10 +28,16 @@ const VotePage = () => {
   });
 
   const { mutate, isPending } = eventService.Vote({
-    onError: err => {
-      return toast.error(err.response?.data.message)
-    }
-  })
+    onError: (err) => {
+      return toast.error(err.response?.data.message);
+    },
+    onSuccess: ({ data }) => {
+      console.log({ data });
+      toast.success(data.message);
+      queryClient.invalidateQueries({ queryKey: ["event-detail"] });
+      return router.back();
+    },
+  });
 
   return (
     <main>

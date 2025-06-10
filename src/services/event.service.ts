@@ -32,14 +32,14 @@ const eventService = {
   GetEventVoters(
     { eventId, orgId }: { eventId: string; orgId: string },
     params: VotersQueryType,
-    queryKey: QueryKey
+    queryKey: QueryKey,
   ) {
     return useSuspenseQuery({
       queryKey: ["event-voters", ...queryKey],
       queryFn: async () => {
         const data = await eventApi.getEventVoters(
           { eventId },
-          { params: { ...params, orgId } }
+          { params: { ...params, orgId } },
         );
         return data.data;
       },
@@ -60,17 +60,20 @@ const eventService = {
     });
   },
 
-  Vote(options?: MutationOptions<{ orgId: string, eventId: string, candidateId: string }>) {
+  Vote(
+    options?: MutationOptions<{
+      orgId: string;
+      eventId: string;
+      candidateId: string;
+    }>,
+  ) {
     return useMutation({
       ...options,
       mutationFn: ({ orgId, candidateId, eventId }) => {
         return eventApi.vote({ eventId, candidateId }, { params: { orgId } });
       },
-      onSuccess() {
-        queryClient.invalidateQueries({ queryKey: ["event-detail"] })
-      },
-    })
-  }
+    });
+  },
 };
 
 export default eventService;
