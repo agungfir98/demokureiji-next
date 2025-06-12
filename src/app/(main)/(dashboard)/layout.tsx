@@ -35,7 +35,7 @@ const DashboardLayout: React.FC<PropsWithChildren & { modal: ReactNode }> = ({
           <div className="flex-grow gap-4 pt-0 bg-background overflow-hidden">
             <ScrollArea className="h-full overflow-auto px-4 ">
               <div className="grid gap-4">
-                {isFetching && <CardSkeleton />}
+                {isFetching ? <CardSkeleton /> : null}
                 <Card>{children}</Card>
               </div>
               {modal}
