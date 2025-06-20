@@ -8,6 +8,15 @@ import { RoleBaseRenderer } from "../../components/role-based-render";
 import { StatusButton } from "./components/StatusButton";
 import { VoterList } from "./components/voterList";
 import { Button } from "~/components/ui/button";
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "~/components/ui/charts";
+import { LabelList, Pie, PieChart } from "recharts";
 
 const EventDetail = () => {
   const { eventId, id: orgId } = useParams();
@@ -15,6 +24,20 @@ const EventDetail = () => {
 
   const { data: event } = eventService.GetEvent(eventId as string, {
     orgId: orgId as string,
+  });
+
+  const chartConfig: ChartConfig = {
+    visitor: {
+      label: "vote",
+    },
+  } satisfies ChartConfig;
+
+  event?.candidates.forEach((v, i) => {
+    const key = v.calonKetua;
+    chartConfig[key] = {
+      label: key,
+      color: `hsl(var(--chart-${i + 2}))`,
+    };
   });
 
   return (
@@ -46,6 +69,39 @@ const EventDetail = () => {
         </div>
       </CardHeader>
       <CardContent>
+        <div>
+          <ChartContainer
+            config={chartConfig}
+            className="mx-auto aspect-square max-h-[250px] [&_.recharts-text]:fill-background"
+          >
+            <PieChart>
+              <ChartTooltip
+                content={<ChartTooltipContent nameKey="calonKetua" hideLabel />}
+              />
+              <Pie
+                data={event?.candidates.map((v) => ({
+                  ...v,
+                  fill: `var(--color-${v.calonKetua})`,
+                }))}
+                dataKey={"numOfVotes"}
+              >
+                <LabelList
+                  dataKey="calonKetua"
+                  className="fill-background"
+                  stroke="none"
+                  fontSize={12}
+                  formatter={(value: keyof typeof chartConfig) =>
+                    chartConfig[value]?.label
+                  }
+                />
+                <ChartLegend
+                  content={<ChartLegendContent nameKey="calonKetua" />}
+                  className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center"
+                />
+              </Pie>
+            </PieChart>
+          </ChartContainer>
+        </div>
         <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {event?.candidates.map((candidate, index) => (
             <li key={index}>
