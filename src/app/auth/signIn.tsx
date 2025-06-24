@@ -1,7 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoaderCircle } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
@@ -28,7 +27,6 @@ export const SignInForm = () => {
   });
 
   const { setToken } = useAuthStore();
-  const router = useRouter();
   const { mutate, isPending } = authService.SignIn({
     onError(err) {
       const message = err.response?.data.message as string;
@@ -37,7 +35,7 @@ export const SignInForm = () => {
     onSuccess({ data }) {
       setToken(data.data.token);
 
-      return router.replace("/");
+      window.location.href = "/";
     },
   });
 
