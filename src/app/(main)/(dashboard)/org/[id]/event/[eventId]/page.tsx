@@ -1,13 +1,9 @@
 "use client";
 import { useParams, useRouter } from "next/navigation";
+import { LabelList, Pie, PieChart } from "recharts";
 import { EventStatus } from "~/components/event-activity-status";
-import { Card, CardContent, CardHeader } from "~/components/ui/card";
-import { Separator } from "~/components/ui/separator";
-import eventService from "~/services/event.service";
-import { RoleBaseRenderer } from "../../components/role-based-render";
-import { StatusButton } from "./components/StatusButton";
-import { VoterList } from "./components/voterList";
 import { Button } from "~/components/ui/button";
+import { Card, CardContent, CardHeader } from "~/components/ui/card";
 import {
   ChartConfig,
   ChartContainer,
@@ -16,7 +12,11 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "~/components/ui/charts";
-import { LabelList, Pie, PieChart } from "recharts";
+import { Separator } from "~/components/ui/separator";
+import eventService from "~/services/event.service";
+import { RoleBaseRenderer } from "../../components/role-based-render";
+import { StatusButton } from "./components/StatusButton";
+import { VoterList } from "./components/voterList";
 
 const EventDetail = () => {
   const { eventId, id: orgId } = useParams();
@@ -36,9 +36,13 @@ const EventDetail = () => {
     const key = v.calonKetua;
     chartConfig[key] = {
       label: key,
-      color: `hsl(var(--chart-${i + 2}))`,
+      color: `hsl(var(--chart-${i + 1}))`,
     };
   });
+
+  if (!event) {
+    return <p>event not found</p>;
+  }
 
   return (
     <main>
@@ -46,11 +50,11 @@ const EventDetail = () => {
         <div className="flex justify-between">
           <div>
             <h1 className="text-2xl font-semibold">{event?.voteTitle}</h1>
-            <EventStatus status={event?.status!} />
+            <EventStatus status={event.status} />
           </div>
           <div className="flex gap-2">
-            {!event?.hasVoted && (
-              <RoleBaseRenderer requiredRole="MEMBER" userRole={event?.role!}>
+            {!event.hasVoted && (
+              <RoleBaseRenderer requiredRole="MEMBER" userRole={event.role!}>
                 <Button
                   size="sm"
                   role="link"
@@ -62,46 +66,51 @@ const EventDetail = () => {
                 </Button>
               </RoleBaseRenderer>
             )}
-            <RoleBaseRenderer requiredRole="ADMIN" userRole={event?.role!}>
-              <StatusButton status={event?.status!} />
+            <RoleBaseRenderer requiredRole="ADMIN" userRole={event.role!}>
+              <StatusButton status={event.status!} />
             </RoleBaseRenderer>
           </div>
         </div>
       </CardHeader>
       <CardContent>
-        <div>
-          <ChartContainer
-            config={chartConfig}
-            className="mx-auto aspect-square max-h-[250px] [&_.recharts-text]:fill-background"
-          >
-            <PieChart>
-              <ChartTooltip
-                content={<ChartTooltipContent nameKey="calonKetua" hideLabel />}
-              />
-              <Pie
-                data={event?.candidates.map((v) => ({
-                  ...v,
-                  fill: `var(--color-${v.calonKetua})`,
-                }))}
-                dataKey={"numOfVotes"}
-              >
-                <LabelList
-                  dataKey="calonKetua"
-                  className="fill-background"
-                  stroke="none"
-                  fontSize={12}
-                  formatter={(value: keyof typeof chartConfig) =>
-                    chartConfig[value]?.label
+        {event?.isActive ? (
+          <>
+            <ChartContainer
+              config={chartConfig}
+              className="mx-auto aspect-square max-h-[350px] [&_.recharts-text]:fill-background"
+            >
+              <PieChart>
+                <ChartTooltip
+                  content={
+                    <ChartTooltipContent nameKey="calonKetua" hideLabel />
                   }
                 />
-                <ChartLegend
-                  content={<ChartLegendContent nameKey="calonKetua" />}
-                  className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center"
-                />
-              </Pie>
-            </PieChart>
-          </ChartContainer>
-        </div>
+                <Pie
+                  data={event?.candidates.map((v) => ({
+                    ...v,
+                    fill: `var(--color-${v.calonKetua})`,
+                  }))}
+                  dataKey={"numOfVotes"}
+                >
+                  <LabelList
+                    dataKey="calonKetua"
+                    className="fill-background text-base"
+                    stroke="none"
+                    fontSize={12}
+                    formatter={(value: keyof typeof chartConfig) =>
+                      chartConfig[value]?.label
+                    }
+                  />
+                  <ChartLegend
+                    content={<ChartLegendContent nameKey="calonKetua" />}
+                    className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center"
+                  />
+                </Pie>
+              </PieChart>
+            </ChartContainer>
+            <Separator className="w-4/5 mx-auto my-5" />
+          </>
+        ) : null}
         <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {event?.candidates.map((candidate, index) => (
             <li key={index}>
