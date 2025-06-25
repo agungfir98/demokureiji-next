@@ -2,7 +2,7 @@ import axios from "axios";
 import useAuthStore from "~/hooks/useAuth";
 
 export const axiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URI,
+  baseURL: "/api",
   withCredentials: true,
   headers: {},
 });
@@ -15,5 +15,5 @@ axiosInstance.interceptors.request.use(
   },
   (err) => {
     return Promise.reject(err);
-  }
+  },
 );
