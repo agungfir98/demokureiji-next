@@ -2,7 +2,6 @@ import { LoaderCircle, TriangleAlert } from "lucide-react";
 import { useParams } from "next/navigation";
 import { createContext, PropsWithChildren, useContext, useState } from "react";
 import { toast } from "sonner";
-import { queryClient } from "~/components/query-provider";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,10 +18,16 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from "~/components/ui/context-menu";
-import { orgService } from "~/services/orgService";
-import { OrgMember } from "~/type/httpResponse";
+import {
+  OrgMembersResponse,
+  useDemoteAdmin,
+  usePromoteMember,
+  useRemoveMember,
+} from "~/features/org";
 
-const memberContext = createContext<OrgMember[0] | null>(null);
+const memberContext = createContext<OrgMembersResponse["members"][0] | null>(
+  null,
+);
 
 const useMemberContext = () => {
   const context = useContext(memberContext);
@@ -34,11 +39,11 @@ const useMemberContext = () => {
 };
 
 export const MemberContextMenu: React.FC<
-  PropsWithChildren & { member: OrgMember[0] }
+  PropsWithChildren & { member: OrgMembersResponse["members"][0] }
 > = ({ children, member }) => {
   const [alertDialog, setAlertDialog] = useState<{
     open: boolean;
-    action: "demote" | "promote" | "kick" | null;
+    action: "demote" | "promote" | "remove" | null;
   }>({ open: false, action: null });
 
   return (
@@ -68,7 +73,7 @@ export const MemberContextMenu: React.FC<
           <ContextMenuItem
             inset
             className="justify-between"
-            onClick={() => setAlertDialog({ open: true, action: "kick" })}
+            onClick={() => setAlertDialog({ open: true, action: "remove" })}
           >
             kick users
             <TriangleAlert className="w-4 h-4" />
@@ -86,14 +91,14 @@ export const MemberContextMenu: React.FC<
 
 const ContextMenuDialog: React.FC<{
   open: boolean;
-  action: "demote" | "promote" | "kick";
+  action: "demote" | "promote" | "remove";
   onOpenChange?(open: boolean): void;
 }> = ({ open, onOpenChange, action }) => {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       {action === "promote" && <PromoteAdminDialog />}
       {action === "demote" && <DemoteAdminDialog />}
-      {action === "kick" && <KickMemberDialog />}
+      {action === "remove" && <RemoveMemberDialog />}
     </AlertDialog>
   );
 };
@@ -102,10 +107,9 @@ const PromoteAdminDialog = () => {
   const { id: orgId } = useParams();
   const ctx = useMemberContext();
 
-  const { mutate, isPending } = orgService.PromoteMember({
-    onSuccess(data) {
-      toast.success(data.data.message);
-      queryClient.invalidateQueries({ queryKey: ["orgDetail", orgId] });
+  const { mutate, isPending } = usePromoteMember({
+    onSuccess() {
+      toast.success(`${ctx.name} has promoted`);
     },
     onError(error) {
       toast.error(error.message);
@@ -124,7 +128,7 @@ const PromoteAdminDialog = () => {
         <AlertDialogCancel>Cancel</AlertDialogCancel>
         <AlertDialogAction
           onClick={() => {
-            mutate({ userId: ctx!._id, orgId: orgId as string });
+            mutate({ userId: ctx!.id, orgId: orgId as string });
           }}
         >
           <LoaderCircle className={`animate-spin ${!isPending && "hidden"}`} />
@@ -139,10 +143,9 @@ const DemoteAdminDialog = () => {
   const { id: orgId } = useParams();
   const ctx = useMemberContext();
 
-  const { mutate, isPending } = orgService.DemoteAdmin({
-    onSuccess(data) {
-      toast.success(data.data.message);
-      queryClient.invalidateQueries({ queryKey: ["orgDetail", orgId] });
+  const { mutate, isPending } = useDemoteAdmin({
+    onSuccess() {
+      toast.success(`${ctx.name} has demoted to member`);
     },
     onError(error) {
       toast.error(error.message);
@@ -161,7 +164,7 @@ const DemoteAdminDialog = () => {
         <AlertDialogCancel>Cancel</AlertDialogCancel>
         <AlertDialogAction
           onClick={() => {
-            mutate({ userId: ctx!._id, orgId: orgId as string });
+            mutate({ userId: ctx!.id, orgId: orgId as string });
           }}
         >
           <LoaderCircle className={`animate-spin ${!isPending && "hidden"}`} />
@@ -172,14 +175,13 @@ const DemoteAdminDialog = () => {
   );
 };
 
-const KickMemberDialog = () => {
+const RemoveMemberDialog = () => {
   const { id: orgId } = useParams();
   const ctx = useMemberContext();
 
-  const { mutate, isPending } = orgService.KickMember({
-    onSuccess(data) {
-      toast.success(data.data.message);
-      queryClient.invalidateQueries({ queryKey: ["orgDetail", orgId] });
+  const { mutate, isPending } = useRemoveMember({
+    onSuccess() {
+      toast.success(`${ctx.name} has removed from organization`);
     },
     onError(error) {
       toast.error(error.message);
@@ -200,7 +202,7 @@ const KickMemberDialog = () => {
         <AlertDialogCancel>Cancel</AlertDialogCancel>
         <AlertDialogAction
           onClick={() => {
-            mutate({ userId: ctx!._id, orgId: orgId as string });
+            mutate({ userId: ctx!.id, orgId: orgId as string });
           }}
         >
           <LoaderCircle className={`animate-spin ${!isPending && "hidden"}`} />

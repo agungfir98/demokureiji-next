@@ -2,7 +2,6 @@ import { LoaderCircle } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
-import { queryClient } from "~/components/query-provider";
 import { SearchInput } from "~/components/searchInput";
 import {
   AlertDialog,
@@ -17,10 +16,10 @@ import {
 } from "~/components/ui/alert-dialog";
 import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
+import { useAddMember } from "~/features/org";
+import { SearchUserResponse, useSearchUser } from "~/features/user/searchUser";
 import { useDebouncer } from "~/hooks/useDebouncer";
-import { orgService } from "~/services/orgService";
-import { userService } from "~/services/user.service";
-import { IUser } from "~/type/httpResponse";
+import { queryClient } from "~/lib/query-client";
 
 export const NewMemberModal: React.FC<{
   open: boolean;
@@ -31,16 +30,18 @@ export const NewMemberModal: React.FC<{
   const [value] = useDebouncer(searchUser, 500);
   const { id: orgId } = useParams();
 
-  const { data: searchData } = userService.SearchUser(
-    { value },
-    { enabled: !!value, queryKey: ["search-user", value] }
-  );
-  const [selected, setSelected] = useState<IUser>();
+  const { data: searchData } = useSearchUser({
+    value,
+    queryConfig: { enabled: !!value },
+  });
+  const [selected, setSelected] = useState<SearchUserResponse>();
 
-  const { mutate, isPending } = orgService.NewMember({
-    onSuccess(data) {
-      toast.success(data.data.message);
+  const { mutate, isPending } = useAddMember({
+    onSuccess() {
+      toast.success("new member added");
       queryClient.invalidateQueries({ queryKey: ["orgDetail", orgId] });
+      setSearchUser("");
+      props.onOpenChange(false);
     },
   });
 
@@ -55,10 +56,10 @@ export const NewMemberModal: React.FC<{
           onChange={(e) => setSearchUser(e.target.value)}
         />
         <ul className="grid mb-4 gap-2">
-          {searchData?.data.data?.length === 0 && (
+          {searchData?.data?.length === 0 && (
             <p className="mx-auto my-10 opacity-65">No result</p>
           )}
-          {searchData?.data.data?.map((user, index) => (
+          {searchData?.data?.map((user, index) => (
             <Button
               asChild
               variant="outline"
@@ -90,7 +91,7 @@ export const NewMemberModal: React.FC<{
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
-                mutate({ userId: selected!._id, orgId: orgId as string });
+                mutate({ userId: selected!.id, orgId: orgId as string });
               }}
             >
               <LoaderCircle
