@@ -1,13 +1,11 @@
 import { z } from "zod";
-import { axiosInstance } from "../api";
-import { MutationConfig } from "~/lib/query-client";
+import { axiosInstance, HttpResponse } from "../api";
+import { MutationConfig, queryClient } from "~/lib/query-client";
 import { useMutation } from "@tanstack/react-query";
 
 export const voteSchema = z
   .object({
     voteToken: z.string().nonempty("No vote token provided!"),
-    userId: z.string().uuid(),
-    eventId: z.string().uuid(),
     organizationId: z.string(),
     candidateId: z.string().uuid(),
     isAbstain: z.boolean(),
@@ -24,16 +22,18 @@ export const voteSchema = z
       });
     }
   });
+
+export type Vote = z.infer<typeof voteSchema>;
+
 type VoteRequest = {
   eventId: string;
-  payload: z.infer<typeof voteSchema>;
+  payload: Vote;
 };
 
 export const vote = async (params: VoteRequest) => {
-  const response = await axiosInstance.post(
-    `/events/${params.eventId}`,
-    params.payload,
-  );
+  const response = await axiosInstance.post<
+    HttpResponse<{ voteReceipt: string }>
+  >(`/events/${params.eventId}`, params.payload);
   return response.data;
 };
 
@@ -46,5 +46,9 @@ export const useVote = (params: UseVoteOpts) => {
   return useMutation({
     ...params.mutationConfig,
     mutationFn: vote,
+    onSuccess: (data, variables, ctx) => {
+      queryClient.invalidateQueries({ queryKey: [params.eventId] });
+      params.mutationConfig?.onSuccess?.(data, variables, ctx);
+    },
   });
 };
