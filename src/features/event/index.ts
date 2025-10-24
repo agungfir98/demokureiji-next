@@ -11,3 +11,7 @@ export const getCandidateQueryKey = (eventId?: string) => [
   "event-candidates",
   eventId,
 ];
+export const getVoteTokenQueryKey = (eventId?: string) => [
+  "vote-token",
+  eventId,
+];
