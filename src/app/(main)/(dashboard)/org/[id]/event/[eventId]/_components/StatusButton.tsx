@@ -12,19 +12,19 @@ import {
   AlertDialogTrigger,
 } from "~/components/ui/alert-dialog";
 import { Button } from "~/components/ui/button";
-import eventService from "~/services/event.service";
-import { IEvent } from "~/type/httpResponse";
+import { usePatchEvent } from "~/features/event/patchEvent";
+import { EventStatus } from "~/type/event.type";
 
-export const StatusButton: React.FC<{ status: IEvent["status"] }> = ({
-  status,
-}) => {
-  const { eventId, id: orgId } = useParams();
+export const StatusButton: React.FC<{ status: EventStatus }> = ({ status }) => {
+  const { eventId } = useParams();
   const [showDialog, setShowDialog] = useState<boolean>(false);
 
-  const { mutate } = eventService.UpdateEventStatus(
-    orgId as string,
-    eventId as string
-  );
+  const { mutate } = usePatchEvent();
+
+  // const { mutate } = eventService.UpdateEventStatus(
+  //   orgId as string,
+  //   eventId as string
+  // );
 
   const statusConfig = {
     inactive: {
@@ -77,7 +77,15 @@ export const StatusButton: React.FC<{ status: IEvent["status"] }> = ({
           {config.nextStatus && (
             <AlertDialogAction
               disabled={status === "finished"}
-              onClick={() => mutate({ status: config.nextStatus })}
+              onClick={() =>
+                mutate({
+                  eventId: String(eventId),
+                  payload: {
+                    id: String(eventId),
+                    status: config.nextStatus,
+                  },
+                })
+              }
             >
               {config.actionLabel}
             </AlertDialogAction>
