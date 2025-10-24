@@ -1,145 +1,146 @@
 "use client";
+import { Users } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import { LabelList, Pie, PieChart } from "recharts";
 import { EventStatus } from "~/components/event-activity-status";
-import { Button } from "~/components/ui/button";
-import { Card, CardContent, CardHeader } from "~/components/ui/card";
 import {
-  ChartConfig,
-  ChartContainer,
-  ChartLegend,
-  ChartLegendContent,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "~/components/ui/charts";
-import { Separator } from "~/components/ui/separator";
-import eventService from "~/services/event.service";
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "~/components/ui/card";
+import { useGetEvent } from "~/features/event/getEvent";
+import { VoterList } from "./_components/voterList";
+import CandidateList from "./_components/candidateList";
 import { RoleBaseRenderer } from "../../components/role-based-render";
-import { StatusButton } from "./components/StatusButton";
-import { VoterList } from "./components/voterList";
+import { StatusButton } from "./_components/StatusButton";
+import { Button } from "~/components/ui/button";
 
 const EventDetail = () => {
   const { eventId, id: orgId } = useParams();
   const router = useRouter();
 
-  const { data: event } = eventService.GetEvent(eventId as string, {
-    orgId: orgId as string,
-  });
-
-  const chartConfig: ChartConfig = {
-    visitor: {
-      label: "vote",
+  const { data } = useGetEvent({
+    eventId: String(eventId),
+    queryConfig: {
+      enabled: !!eventId,
     },
-  } satisfies ChartConfig;
-
-  event?.candidates.forEach((v, i) => {
-    const key = v.calonKetua;
-    chartConfig[key] = {
-      label: key,
-      color: `hsl(var(--chart-${i + 1}))`,
-    };
   });
 
-  if (!event) {
-    return <p>event not found</p>;
+  // const chartConfig: ChartConfig = {
+  //   visitor: {
+  //     label: "vote",
+  //   },
+  // } satisfies ChartConfig;
+
+  // event?.candidates.forEach((v, i) => {
+  //   const key = v.calonKetua;
+  //   chartConfig[key] = {
+  //     label: key,
+  //     color: `hsl(var(--chart-${i + 1}))`,
+  //   };
+  // });
+
+  if (!data?.data) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <p className="text-muted-foreground">Event not found</p>
+      </div>
+    );
   }
 
   return (
-    <main>
-      <CardHeader>
-        <div className="flex justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold">{event?.voteTitle}</h1>
-            <EventStatus status={event.status} />
+    <div className="container mx-auto py-8 px-4 max-w-7xl">
+      <div className="mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
+          <div className="space-y-2">
+            <h1 className="text-4xl font-bold tracking-tight">
+              {data.data.title}
+            </h1>
+            <EventStatus status={data.data.status} />
           </div>
           <div className="flex gap-2">
-            {!event.hasVoted && (
-              <RoleBaseRenderer requiredRole="MEMBER" userRole={event.role!}>
+            {!data.data.hasVoted && (
+              <RoleBaseRenderer requiredRole="MEMBER" userRole={data.data.role}>
                 <Button
-                  size="sm"
-                  role="link"
+                  size="default"
                   onClick={() =>
                     router.push(`/org/${orgId}/event/${eventId}/vote`)
                   }
                 >
-                  vote
+                  Cast Your Vote
                 </Button>
               </RoleBaseRenderer>
             )}
-            <RoleBaseRenderer requiredRole="ADMIN" userRole={event.role!}>
-              <StatusButton status={event.status!} />
+            <RoleBaseRenderer requiredRole="ADMIN" userRole={data.data.role}>
+              <StatusButton status={data.data.status} />
             </RoleBaseRenderer>
           </div>
         </div>
-      </CardHeader>
-      <CardContent>
-        {event?.isActive ? (
-          <>
-            <ChartContainer
-              config={chartConfig}
-              className="mx-auto aspect-square max-h-[350px] [&_.recharts-text]:fill-background"
-            >
-              <PieChart>
-                <ChartTooltip
-                  content={
-                    <ChartTooltipContent nameKey="calonKetua" hideLabel />
-                  }
-                />
-                <Pie
-                  data={event?.candidates.map((v) => ({
-                    ...v,
-                    fill: `var(--color-${v.calonKetua})`,
-                  }))}
-                  dataKey={"numOfVotes"}
-                >
-                  <LabelList
-                    dataKey="calonKetua"
-                    className="fill-background text-base"
-                    stroke="none"
-                    fontSize={12}
-                    formatter={(value: keyof typeof chartConfig) =>
-                      chartConfig[value]?.label
-                    }
-                  />
-                  <ChartLegend
-                    content={<ChartLegendContent nameKey="calonKetua" />}
-                    className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center"
-                  />
-                </Pie>
-              </PieChart>
-            </ChartContainer>
-            <Separator className="w-4/5 mx-auto my-5" />
-          </>
-        ) : null}
-        <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {event?.candidates.map((candidate, index) => (
-            <li key={index}>
-              <Card>
-                <CardHeader>
-                  <h1>Candidate {index + 1}</h1>
-                </CardHeader>
-                <CardContent className="grid gap-4">
-                  <div>
-                    <h1>{candidate.calonKetua}</h1>
-                    <h1>{candidate.calonWakil}</h1>
-                  </div>
-                  <Separator />
-                  <div>
-                    <h2 className="font-thin">Description</h2>
-                    <h1>{candidate.description}</h1>
-                  </div>
-                </CardContent>
-              </Card>
-            </li>
-          ))}
-        </ul>
-        <Separator className="my-5" />
-        <div className="flex justify-between my-2">
-          <h1 className="text-xl">Registerd Voters</h1>
-        </div>
-        <VoterList />
-      </CardContent>
-    </main>
+      </div>
+
+      {/* {event?.isActive && ( */}
+      {/*   <Card className="mb-6"> */}
+      {/*     <CardHeader> */}
+      {/*       <CardTitle>Vote Results</CardTitle> */}
+      {/*       <CardDescription> */}
+      {/*         Current vote distribution across all candidates */}
+      {/*       </CardDescription> */}
+      {/*     </CardHeader> */}
+      {/*     <CardContent> */}
+      {/*       <ChartContainer */}
+      {/*         config={chartConfig} */}
+      {/*         className="mx-auto aspect-square max-h-[400px] [&_.recharts-text]:fill-background" */}
+      {/*       > */}
+      {/*         <PieChart> */}
+      {/*           <ChartTooltip */}
+      {/*             content={ */}
+      {/*               <ChartTooltipContent nameKey="calonKetua" hideLabel /> */}
+      {/*             } */}
+      {/*           /> */}
+      {/*           <Pie */}
+      {/*             data={event?.candidates.map((v) => ({ */}
+      {/*               ...v, */}
+      {/*               fill: `var(--color-${v.calonKetua})`, */}
+      {/*             }))} */}
+      {/*             dataKey={"numOfVotes"} */}
+      {/*           > */}
+      {/*             <LabelList */}
+      {/*               dataKey="calonKetua" */}
+      {/*               className="fill-background text-base" */}
+      {/*               stroke="none" */}
+      {/*               fontSize={12} */}
+      {/*               formatter={(value: keyof typeof chartConfig) => */}
+      {/*                 chartConfig[value]?.label */}
+      {/*               } */}
+      {/*             /> */}
+      {/*             <ChartLegend */}
+      {/*               content={<ChartLegendContent nameKey="calonKetua" />} */}
+      {/*               className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center" */}
+      {/*             /> */}
+      {/*           </Pie> */}
+      {/*         </PieChart> */}
+      {/*       </ChartContainer> */}
+      {/*     </CardContent> */}
+      {/*   </Card> */}
+      {/* )} */}
+
+      <CandidateList />
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <Users className="h-5 w-5 text-muted-foreground" />
+            <CardTitle>Registered Voters</CardTitle>
+          </div>
+          <CardDescription>
+            List of all eligible voters for this event
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <VoterList />
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 

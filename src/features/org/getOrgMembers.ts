@@ -1,13 +1,13 @@
 import { queryOptions, useQuery } from "@tanstack/react-query";
 import { QueryConfig } from "~/lib/query-client";
-import { OrgMemberQueryType } from "~/schema/org";
 import { OrgMemberRole } from "~/type/org.type";
 import { getOrgMemberQueryKey } from ".";
 import { axiosInstance, HttpResponse } from "../api";
+import { SearchAndPaginateType } from "~/schema/query";
 
 type GetOrgMembersRequest = {
   orgId: string;
-  query?: OrgMemberQueryType;
+  query?: SearchAndPaginateType;
 };
 
 export type OrgMembersResponse = {

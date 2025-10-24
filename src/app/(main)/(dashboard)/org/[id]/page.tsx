@@ -10,106 +10,114 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import { Separator } from "~/components/ui/separator";
 import { Skeleton } from "~/components/ui/skeleton";
-import { orgService } from "~/services/orgService";
-import EventList from "./components/EventsList";
-import { MemberList } from "./components/MemberList";
-import { NewMemberModal } from "./components/NewMemberModal";
-import { RoleBaseRenderer } from "./components/role-based-render";
+import { useGetSingleOrg } from "~/features/org";
+import EventList from "./_components/EventsList";
+import { MemberList } from "./_components/MemberList";
+import { NewMemberModal } from "./_components/NewMemberModal";
+import { RoleBaseRenderer } from "./_components/role-based-render";
 
 const OrgDetail = () => {
   const { id } = useParams();
   const [showNewMemberModal, setShowNewMemberModal] = useState<boolean>(false);
   const router = useRouter();
 
-  const { data: org, isLoading } = orgService.GetSingleOrg({
-    orgId: id as string,
+  const { data: org, isLoading } = useGetSingleOrg({
+    orgId: String(id),
   });
 
   return (
-    <div className="grid gap-4">
-      <Card>
-        <CardHeader>
-          <div className="flex justify-between">
-            <div>
-              <CardTitle>
-                <Suspense fallback={<Skeleton className="h-12 w-md" />}>
-                  {isLoading ? (
-                    <Skeleton className="h-8 w-20" />
-                  ) : (
-                    <h1 className="text-2xl font-semibold">
-                      {org?.data.data.organization}
-                    </h1>
-                  )}
-                </Suspense>
-              </CardTitle>
-              <Suspense fallback={<Skeleton className="h-4 w-xl" />}>
-                {isLoading ? (
-                  <Skeleton className="h-5 w-40" />
-                ) : (
-                  <CardDescription>
-                    {org?.data.data.description}
+    <div className="container mx-auto py-8 px-4 max-w-7xl">
+      <div className="mb-8">
+        <Suspense fallback={<Skeleton className="h-10 w-64 mb-2" />}>
+          {isLoading ? (
+            <Skeleton className="h-10 w-64 mb-2" />
+          ) : (
+            <h1 className="text-4xl font-bold tracking-tight mb-2">
+              {org?.data.name}
+            </h1>
+          )}
+        </Suspense>
+        <Suspense fallback={<Skeleton className="h-5 w-96" />}>
+          {isLoading ? (
+            <Skeleton className="h-5 w-96" />
+          ) : (
+            <p className="text-lg text-muted-foreground">
+              {org?.data.description}
+            </p>
+          )}
+        </Suspense>
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-5">
+        <div className="lg:col-span-3 col-span-5 space-y-6">
+          <Card>
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-2xl">Events</CardTitle>
+                  <CardDescription className="mt-1.5">
+                    Manage and view all organization events
                   </CardDescription>
-                )}
-              </Suspense>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div>
-            <div className="flex justify-between my-2">
-              <h1 className="text-xl font-semibold">Events</h1>
-              <Suspense fallback={<Skeleton className="h-8 w-20" />}>
-                <RoleBaseRenderer
-                  userRole={org!.data.data.role as string}
-                  requiredRole="ADMIN"
-                >
-                  <div className="">
+                </div>
+                <Suspense fallback={<Skeleton className="h-9 w-32" />}>
+                  <RoleBaseRenderer
+                    userRole={org?.data.role as string}
+                    requiredRole="ADMIN"
+                  >
                     <Button
-                      size="sm"
-                      onClick={() => {
-                        return router.replace(`/org/${id}/create-event`);
-                      }}
+                      onClick={() => router.replace(`/org/${id}/create-event`)}
+                      className="gap-2"
                     >
-                      <Plus />
+                      <Plus className="h-4 w-4" />
                       New Event
                     </Button>
-                  </div>
-                </RoleBaseRenderer>
+                  </RoleBaseRenderer>
+                </Suspense>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <Suspense fallback={<Skeleton className="h-64 w-full" />}>
+                <EventList />
               </Suspense>
-            </div>
-            <Suspense fallback={<Skeleton className="h-52 w-full" />}>
-              <EventList />
-            </Suspense>
-          </div>
-          <Separator className="my-4" />
+            </CardContent>
+          </Card>
+        </div>
 
-          <div>
-            <div className="flex justify-between my-2">
-              <h1 className="text-xl font-semibold">Members</h1>
+        <div className="space-y-6 lg:col-span-2 col-span-5">
+          <Card>
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-2xl">Members</CardTitle>
+                  <CardDescription className="mt-1.5">
+                    Team members and roles
+                  </CardDescription>
+                </div>
+              </div>
               <Suspense>
                 <RoleBaseRenderer
-                  userRole={org?.data.data.role as string}
+                  userRole={org?.data.role as string}
                   requiredRole="ADMIN"
                 >
-                  <div className="">
-                    <Button
-                      size="sm"
-                      onClick={() => setShowNewMemberModal(true)}
-                    >
-                      <Plus />
-                      add member
-                    </Button>
-                  </div>
+                  <Button
+                    onClick={() => setShowNewMemberModal(true)}
+                    variant="outline"
+                    className="w-full gap-2 mt-4"
+                  >
+                    <Plus className="h-4 w-4" />
+                    Add Member
+                  </Button>
                 </RoleBaseRenderer>
               </Suspense>
-            </div>
+            </CardHeader>
+            <CardContent>
+              <MemberList role={org!.data.role} />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
 
-            <MemberList />
-          </div>
-        </CardContent>
-      </Card>
       <NewMemberModal
         open={showNewMemberModal}
         onOpenChange={setShowNewMemberModal}

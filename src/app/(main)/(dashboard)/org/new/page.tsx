@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { queryClient } from "~/components/query-provider";
 import { Button } from "~/components/ui/button";
 import {
   Card,
@@ -24,24 +23,29 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
-import { orgService } from "~/services/orgService";
-import { newOrgSchema, NewOrgType } from "~/type/org";
+import {
+  createOrgRequest,
+  createOrgSchema,
+  getOrgQueryKey,
+  useCreateOrg,
+} from "~/features/org";
+import { queryClient } from "~/lib/query-client";
 
 const NewOrganization = () => {
-  const newOrgForm = useForm<NewOrgType>({
-    resolver: zodResolver(newOrgSchema),
+  const newOrgForm = useForm<createOrgRequest>({
+    resolver: zodResolver(createOrgSchema),
     defaultValues: {
       description: "",
-      orgName: "",
+      name: "",
     },
   });
 
   const router = useRouter();
 
-  const { mutate, isPending } = orgService.NewOrganization({
-    onSuccess({ data }) {
-      toast.success(data.message);
-      queryClient.invalidateQueries({ queryKey: ["organization"] });
+  const { mutate, isPending } = useCreateOrg({
+    onSuccess({ message }) {
+      toast.success(message);
+      queryClient.invalidateQueries({ queryKey: getOrgQueryKey() });
       return router.back();
     },
   });
@@ -58,7 +62,7 @@ const NewOrganization = () => {
               <div className="grid gap-4">
                 <FormField
                   control={newOrgForm.control}
-                  name="orgName"
+                  name="name"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel title={field.name}>organization</FormLabel>

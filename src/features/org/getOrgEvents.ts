@@ -3,6 +3,7 @@ import { QueryConfig } from "~/lib/query-client";
 import { PaginationQueryType } from "~/schema/query";
 import { axiosInstance, HttpResponse } from "../api";
 import { getOrgEventQueryKey } from ".";
+import { EventStatus } from "~/type/event.type";
 
 type GetOrgEventRequest = {
   orgId: string;
@@ -14,7 +15,7 @@ type GetOrgEventsResponse = {
   title: string;
   description: string;
   organizationId: string;
-  status: string;
+  status: EventStatus;
   startDate: Date;
   endDate: Date;
   allowAbstain: boolean;

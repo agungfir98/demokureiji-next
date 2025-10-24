@@ -1,15 +1,13 @@
 import { cn } from "~/lib/utils";
-import { IEvent } from "~/type/httpResponse";
+import { EventStatus as Status } from "~/type/event.type";
 
-const condition: Record<IEvent["status"], string> = {
+const condition: Record<Status, string> = {
   active: "bg-green-500",
   inactive: "bg-red-500",
   finished: "bg-slate-500",
 };
 
-export const EventStatus: React.FC<{ status: IEvent["status"] }> = ({
-  status,
-}) => {
+export const EventStatus: React.FC<{ status: Status }> = ({ status }) => {
   if (!status) return null;
 
   return (

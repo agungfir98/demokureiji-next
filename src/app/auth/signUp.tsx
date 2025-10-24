@@ -13,8 +13,7 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import { authService } from "~/services/authService";
-import { signUpSchema, type SignUpType } from "~/type/auth";
+import { useSignUp, SignUpType, signUpSchema } from "~/features/auth";
 
 export const SignUpForm = () => {
   const signUpForm = useForm<SignUpType>({
@@ -27,9 +26,9 @@ export const SignUpForm = () => {
     },
   });
 
-  const { mutate, isPending } = authService.SignUp({
+  const { mutate, isPending } = useSignUp({
     onError(err) {
-      const message = err.response?.data.message as string;
+      const message = err.message;
       return toast.error(message);
     },
     onSuccess() {

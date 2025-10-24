@@ -1,5 +1,4 @@
 "use client";
-
 import { MoreHorizontal, Plus, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -11,10 +10,10 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "~/components/ui/sidebar";
-import { orgService } from "~/services/orgService";
+import { useGetUserOrg } from "~/features/org";
 
-export function NavOrg() {
-  const { data } = orgService.GetOrganizations();
+export const NavOrg = () => {
+  const { data } = useGetUserOrg();
   const [max, setMax] = useState<number>(5);
 
   return (
@@ -31,20 +30,21 @@ export function NavOrg() {
             </SidebarMenuButton>
           </Link>
         </SidebarMenuItem>
-        {data?.organization.slice(0, max).map((item, index) => (
-          <SidebarMenuItem key={index}>
-            <Link href={`/org/${item._id}`} passHref>
-              <SidebarMenuButton asChild>
-                <div>
-                  <UsersRound />
-                  <span>{item.organization}</span>
-                </div>
-              </SidebarMenuButton>
-            </Link>
-          </SidebarMenuItem>
-        ))}
+        {data &&
+          data?.data.slice(0, max).map((item, index) => (
+            <SidebarMenuItem key={index}>
+              <Link href={`/org/${item.organization.id}`} passHref>
+                <SidebarMenuButton asChild>
+                  <div>
+                    <UsersRound />
+                    <span>{item.organization.name}</span>
+                  </div>
+                </SidebarMenuButton>
+              </Link>
+            </SidebarMenuItem>
+          ))}
         <SidebarMenuItem>
-          {max === data?.organization.length ? (
+          {max === data?.data.length ? (
             <SidebarMenuButton
               className="text-sidebar-foreground/70"
               onClick={() => setMax(5)}
@@ -58,8 +58,8 @@ export function NavOrg() {
               onClick={() => {
                 setMax((max) => {
                   if (data !== undefined) {
-                    if (data.organization.length < max + 5) {
-                      return (max += data.organization.length - max);
+                    if (data.data.length < max + 5) {
+                      return (max += data.data.length - max);
                     }
                     return max + 5;
                   }
@@ -75,4 +75,4 @@ export function NavOrg() {
       </SidebarMenu>
     </SidebarGroup>
   );
-}
+};

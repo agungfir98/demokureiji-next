@@ -1,6 +1,7 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoaderCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
@@ -13,11 +14,11 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
+import { signInSchema, SignInType, useSignIn } from "~/features/auth";
 import useAuthStore from "~/hooks/useAuth";
-import { authService } from "~/services/authService";
-import { signInSchema, type SignInType } from "~/type/auth";
 
 export const SignInForm = () => {
+  const router = useRouter();
   const signInForm = useForm<SignInType>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -27,15 +28,16 @@ export const SignInForm = () => {
   });
 
   const { setToken } = useAuthStore();
-  const { mutate, isPending } = authService.SignIn({
+  const { mutate, isPending } = useSignIn({
     onError(err) {
-      const message = err.response?.data.message as string;
+      const message = err.message;
       return toast.error(message);
     },
-    onSuccess({ data }) {
+    onSuccess(data) {
+      toast.success(data.message);
       setToken(data.data.token);
-
-      window.location.href = "/";
+      router.replace("/");
+      router.refresh();
     },
   });
 

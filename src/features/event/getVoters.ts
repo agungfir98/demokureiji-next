@@ -1,12 +1,12 @@
 import { queryOptions, useQuery } from "@tanstack/react-query";
 import { QueryConfig } from "~/lib/query-client";
-import { OrgMemberQueryType } from "~/schema/org";
 import { getVotersQueryKey } from ".";
 import { axiosInstance, HttpResponse } from "../api";
+import { SearchAndPaginateType } from "~/schema/query";
 
 type GetVotersRequest = {
   eventId: string;
-  query: OrgMemberQueryType;
+  query: SearchAndPaginateType;
 };
 
 type VotersResponse = {
