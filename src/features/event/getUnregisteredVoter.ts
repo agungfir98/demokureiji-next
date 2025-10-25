@@ -2,6 +2,7 @@ import { OrgMemberRole } from "~/type/org.type";
 import { axiosInstance, HttpResponse } from "../api";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 import { QueryConfig } from "~/lib/query-client";
+import { SearchAndPaginateType } from "~/schema/query";
 
 type Members = {
   memberId: string;
@@ -18,31 +19,38 @@ type Pagination = {
   limit: number;
   totalMembers: number;
   totalPages: number;
-  hasNext: boolean;
-  hasPrev: boolean;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
 };
 
 type UnregisteredVoters = {
-  members: Members;
+  members: Members[];
   pagination: Pagination;
 };
 
-export const getUnregisteredVoter = async (eventId: string) => {
+type UnregisteredVotersReq = {
+  eventId: string;
+  query: SearchAndPaginateType;
+};
+
+export const getUnregisteredVoter = async (params: UnregisteredVotersReq) => {
   const response = await axiosInstance.get<HttpResponse<UnregisteredVoters>>(
-    `/events/${eventId}/unregistered-voters`,
+    `/events/${params.eventId}/unregistered-voters`,
+    { params: { ...params.query } },
   );
   return response.data;
 };
 
-const getUnregisteredVoterOpts = (eventId: string) => {
+const getUnregisteredVoterOpts = (params: UnregisteredVotersReq) => {
   return queryOptions({
-    queryKey: [],
-    queryFn: () => getUnregisteredVoter(eventId),
+    queryKey: [params.query],
+    queryFn: () => getUnregisteredVoter(params),
+    retry: false,
   });
 };
 
 type UseGetUnregisteredVoterConfig = {
-  eventId: string;
+  params: UnregisteredVotersReq;
   queryConfig: QueryConfig<typeof getUnregisteredVoterOpts>;
 };
 
@@ -51,6 +59,6 @@ export const useGetUnregisteredVoters = (
 ) => {
   return useQuery({
     ...params.queryConfig,
-    ...getUnregisteredVoterOpts(params.eventId),
+    ...getUnregisteredVoterOpts(params.params),
   });
 };
