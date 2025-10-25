@@ -46,9 +46,9 @@ export const useVote = (params: UseVoteOpts) => {
   return useMutation({
     ...params.mutationConfig,
     mutationFn: vote,
-    onSuccess: (data, variables, ctx) => {
+    onSuccess: (data, variables, context) => {
       queryClient.invalidateQueries({ queryKey: [params.eventId] });
-      params.mutationConfig?.onSuccess?.(data, variables, ctx);
+      params.mutationConfig?.onSuccess?.(data, variables, context);
     },
   });
 };

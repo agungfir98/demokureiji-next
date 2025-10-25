@@ -32,11 +32,10 @@ export const usePatchEvent = (mutationConfig: UsePatchEventConfig = {}) => {
   return useMutation({
     ...mutationConfig,
     mutationFn: patchEvent,
-    onSuccess(data, variables, ctx) {
+    onSuccess(_, variables) {
       queryClient.invalidateQueries({
         queryKey: [variables.eventId],
       });
-      mutationConfig?.onSuccess?.(data, variables, ctx);
     },
   });
 };
