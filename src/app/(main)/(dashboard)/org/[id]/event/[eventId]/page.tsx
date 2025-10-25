@@ -12,9 +12,10 @@ import {
 import { useGetEvent } from "~/features/event/getEvent";
 import { VoterList } from "./_components/voterList";
 import CandidateList from "./_components/candidateList";
-import { RoleBaseRenderer } from "../../components/role-based-render";
 import { StatusButton } from "./_components/StatusButton";
 import { Button } from "~/components/ui/button";
+import { RoleBaseRenderer } from "../../_components/role-based-render";
+import { AddVotersDialog } from "./_components/addVotersDialog";
 
 const EventDetail = () => {
   const { eventId, id: orgId } = useParams();
@@ -26,20 +27,6 @@ const EventDetail = () => {
       enabled: !!eventId,
     },
   });
-
-  // const chartConfig: ChartConfig = {
-  //   visitor: {
-  //     label: "vote",
-  //   },
-  // } satisfies ChartConfig;
-
-  // event?.candidates.forEach((v, i) => {
-  //   const key = v.calonKetua;
-  //   chartConfig[key] = {
-  //     label: key,
-  //     color: `hsl(var(--chart-${i + 1}))`,
-  //   };
-  // });
 
   if (!data?.data) {
     return (
@@ -79,58 +66,17 @@ const EventDetail = () => {
         </div>
       </div>
 
-      {/* {event?.isActive && ( */}
-      {/*   <Card className="mb-6"> */}
-      {/*     <CardHeader> */}
-      {/*       <CardTitle>Vote Results</CardTitle> */}
-      {/*       <CardDescription> */}
-      {/*         Current vote distribution across all candidates */}
-      {/*       </CardDescription> */}
-      {/*     </CardHeader> */}
-      {/*     <CardContent> */}
-      {/*       <ChartContainer */}
-      {/*         config={chartConfig} */}
-      {/*         className="mx-auto aspect-square max-h-[400px] [&_.recharts-text]:fill-background" */}
-      {/*       > */}
-      {/*         <PieChart> */}
-      {/*           <ChartTooltip */}
-      {/*             content={ */}
-      {/*               <ChartTooltipContent nameKey="calonKetua" hideLabel /> */}
-      {/*             } */}
-      {/*           /> */}
-      {/*           <Pie */}
-      {/*             data={event?.candidates.map((v) => ({ */}
-      {/*               ...v, */}
-      {/*               fill: `var(--color-${v.calonKetua})`, */}
-      {/*             }))} */}
-      {/*             dataKey={"numOfVotes"} */}
-      {/*           > */}
-      {/*             <LabelList */}
-      {/*               dataKey="calonKetua" */}
-      {/*               className="fill-background text-base" */}
-      {/*               stroke="none" */}
-      {/*               fontSize={12} */}
-      {/*               formatter={(value: keyof typeof chartConfig) => */}
-      {/*                 chartConfig[value]?.label */}
-      {/*               } */}
-      {/*             /> */}
-      {/*             <ChartLegend */}
-      {/*               content={<ChartLegendContent nameKey="calonKetua" />} */}
-      {/*               className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center" */}
-      {/*             /> */}
-      {/*           </Pie> */}
-      {/*         </PieChart> */}
-      {/*       </ChartContainer> */}
-      {/*     </CardContent> */}
-      {/*   </Card> */}
-      {/* )} */}
-
       <CandidateList />
       <Card>
         <CardHeader>
-          <div className="flex items-center gap-2">
-            <Users className="h-5 w-5 text-muted-foreground" />
-            <CardTitle>Registered Voters</CardTitle>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Users className="h-5 w-5 text-muted-foreground" />
+              <CardTitle>Registered Voters</CardTitle>
+            </div>
+            <RoleBaseRenderer requiredRole="ADMIN" userRole={data.data.role}>
+              <AddVotersDialog />
+            </RoleBaseRenderer>
           </div>
           <CardDescription>
             List of all eligible voters for this event
