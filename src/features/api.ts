@@ -10,7 +10,7 @@ export type HttpResponse<TData = any> = {
 };
 
 export const axiosInstance = axios.create({
-  baseURL: `${process.env.NEXT_PUBLIC_API_URI}`,
+  baseURL: "/api",
   withCredentials: true,
   headers: {},
 });
