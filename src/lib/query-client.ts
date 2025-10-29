@@ -4,6 +4,7 @@ import {
   QueryClient,
   UseMutationOptions,
 } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 
 export const queryClient = new QueryClient();
 
@@ -28,6 +29,6 @@ export type MutationConfig<
   MutationFnType extends (...args: any) => Promise<any>,
 > = UseMutationOptions<
   ApiFnReturnType<MutationFnType>,
-  Error,
+  AxiosError<{ success: boolean; message: string }>,
   Parameters<MutationFnType>[0]
 >;

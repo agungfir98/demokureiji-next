@@ -30,8 +30,7 @@ export const SignInForm = () => {
   const { setToken } = useAuthStore();
   const { mutate, isPending } = useSignIn({
     onError(err) {
-      const message = err.message;
-      return toast.error(message);
+      return toast.error(err.response?.data.message);
     },
     onSuccess(data) {
       toast.success(data.message);
