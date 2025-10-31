@@ -35,7 +35,7 @@ type UnregisteredVotersReq = {
 
 export const getUnregisteredVoter = async (params: UnregisteredVotersReq) => {
   const response = await axiosInstance.get<HttpResponse<UnregisteredVoters>>(
-    `/events/${params.eventId}/unregistered-voters`,
+    `/events/${params.eventId}/voters/unregistered`,
     { params: { ...params.query } },
   );
   return response.data;
