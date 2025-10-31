@@ -83,7 +83,7 @@ const EventDetail = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <VoterList />
+          <VoterList role={data.data.role} />
         </CardContent>
       </Card>
     </div>
