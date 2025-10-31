@@ -9,7 +9,7 @@ type GetVoteTokenResponse = {
 
 export const getVoteToken = async (eventId: string) => {
   const response = await axiosInstance.get<HttpResponse<GetVoteTokenResponse>>(
-    `/events/${eventId}/vote-token`,
+    `/events/${eventId}/votes/token`,
   );
   return response.data;
 };

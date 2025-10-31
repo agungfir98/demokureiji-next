@@ -33,7 +33,7 @@ type VoteRequest = {
 export const vote = async (params: VoteRequest) => {
   const response = await axiosInstance.post<
     HttpResponse<{ voteReceipt: string }>
-  >(`/events/${params.eventId}`, params.payload);
+  >(`/events/${params.eventId}/votes`, params.payload);
   return response.data;
 };
 
