@@ -3,6 +3,7 @@ import { axiosInstance, HttpResponse } from "../api";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 import { QueryConfig } from "~/lib/query-client";
 import { SearchAndPaginateType } from "~/schema/query";
+import { getUnregisteredVotersQueryKey } from ".";
 
 type Members = {
   memberId: string;
@@ -43,7 +44,7 @@ export const getUnregisteredVoter = async (params: UnregisteredVotersReq) => {
 
 const getUnregisteredVoterOpts = (params: UnregisteredVotersReq) => {
   return queryOptions({
-    queryKey: [params.query],
+    queryKey: [...getUnregisteredVotersQueryKey(), params.query],
     queryFn: () => getUnregisteredVoter(params),
     retry: false,
   });

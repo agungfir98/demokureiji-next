@@ -40,7 +40,7 @@ export const getVoters = async (payload: GetVotersRequest) => {
 
 const getVotersQueryConfig = (req: GetVotersRequest) => {
   return queryOptions({
-    queryKey: [getVotersQueryKey(req.eventId), req.query],
+    queryKey: [...getVotersQueryKey(), req.query],
     queryFn: () => getVoters(req),
   });
 };

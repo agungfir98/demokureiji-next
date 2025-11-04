@@ -3,15 +3,7 @@ export * from "./getEvent";
 export * from "./getVoters";
 
 export const getEventQueryKey = () => ["events"];
-export const getVotersQueryKey = (eventId?: string) => [
-  "event-voters",
-  eventId,
-];
-export const getCandidateQueryKey = (eventId?: string) => [
-  "event-candidates",
-  eventId,
-];
-export const getVoteTokenQueryKey = (eventId?: string) => [
-  "vote-token",
-  eventId,
-];
+export const getVotersQueryKey = () => ["event-voters",];
+export const getUnregisteredVotersQueryKey = () => ["unregistered-voters"]
+export const getCandidateQueryKey = () => ["event-candidates",];
+export const getVoteTokenQueryKey = () => ["vote-token",];
