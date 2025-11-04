@@ -12,3 +12,10 @@ export function hasRole(
 ): boolean {
   return allowedRole.includes(role);
 }
+
+
+export function setIdempotenHeader(key: string) {
+  return {
+    "X-Idempotency-Key": key
+  }
+}
