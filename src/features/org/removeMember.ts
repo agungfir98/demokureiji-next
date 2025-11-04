@@ -18,13 +18,14 @@ export const removeMember = async ({
 
 type UseRemoveMemberConfig = MutationConfig<typeof removeMember>;
 
-export const useRemoveMember = (mutationConfig: UseRemoveMemberConfig) => {
+export const useRemoveMember = (mutationConfig?: UseRemoveMemberConfig) => {
+  const { onSuccess, ...restConfig } = mutationConfig || {}
   return useMutation({
-    ...mutationConfig,
-    mutationFn: removeMember,
-    onSuccess: (data, variables, ctx) => {
+    onSuccess: (...args) => {
       queryClient.invalidateQueries({ queryKey: getOrgMemberQueryKey() });
-      mutationConfig?.onSuccess?.(data, variables, ctx);
+      onSuccess?.(...args);
     },
+    ...restConfig,
+    mutationFn: removeMember,
   });
 };

@@ -43,12 +43,13 @@ type UseVoteOpts = {
 };
 
 export const useVote = (params: UseVoteOpts) => {
+  const { onSuccess, ...restConfig } = params.mutationConfig || {}
   return useMutation({
-    ...params.mutationConfig,
-    mutationFn: vote,
-    onSuccess: (data, variables, context) => {
+    onSuccess: (...args) => {
       queryClient.invalidateQueries({ queryKey: [params.eventId] });
-      params.mutationConfig?.onSuccess?.(data, variables, context);
+      onSuccess?.(...args);
     },
+    ...restConfig,
+    mutationFn: vote,
   });
 };

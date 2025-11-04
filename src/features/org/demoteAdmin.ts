@@ -18,13 +18,14 @@ export const demoteAdmin = async ({
 
 type UseDemoteAdminConfig = MutationConfig<typeof demoteAdmin>;
 
-export const useDemoteAdmin = (mutationConfig: UseDemoteAdminConfig) => {
+export const useDemoteAdmin = (mutationConfig?: UseDemoteAdminConfig) => {
+  const { onSuccess, ...restConfig } = mutationConfig || {}
   return useMutation({
-    ...mutationConfig,
-    mutationFn: demoteAdmin,
-    onSuccess: (data, variables, ctx) => {
+    onSuccess: (...args) => {
       queryClient.invalidateQueries({ queryKey: getOrgMemberQueryKey() });
-      mutationConfig.onSuccess?.(data, variables, ctx);
+      onSuccess?.(...args);
     },
+    ...restConfig,
+    mutationFn: demoteAdmin,
   });
 };

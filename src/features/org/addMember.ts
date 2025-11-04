@@ -18,13 +18,14 @@ export const addMember = async ({
 
 type UseAddMemberConfig = MutationConfig<typeof addMember>;
 
-export const useAddMember = (mutationConfig: UseAddMemberConfig) => {
+export const useAddMember = (mutationConfig?: UseAddMemberConfig) => {
+  const { onSuccess, ...restConfig } = mutationConfig || {}
   return useMutation({
-    ...mutationConfig,
-    mutationFn: addMember,
-    onSuccess: (data, variables, ctx) => {
+    onSuccess: (...args) => {
       queryClient.invalidateQueries({ queryKey: getOrgMemberQueryKey() });
-      mutationConfig?.onSuccess?.(data, variables, ctx);
+      onSuccess?.(...args);
     },
+    ...restConfig,
+    mutationFn: addMember,
   });
 };
