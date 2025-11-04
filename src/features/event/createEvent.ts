@@ -1,10 +1,12 @@
 import { useMutation } from "@tanstack/react-query";
 import { z } from "zod";
-import { MutationConfig } from "~/lib/query-client";
+import { MutationConfig, queryClient } from "~/lib/query-client";
 import { axiosInstance } from "../api";
+import { setIdempotenHeader } from "~/lib/utils";
+import { getEventQueryKey } from ".";
 
 export const createEventSchema = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().uuid(),
   organizationId: z
     .string()
     .uuid()
@@ -34,7 +36,7 @@ export type CreateEventType = z.infer<typeof createEventandCandidateSchema>;
 
 export const createEvent = async (payload: CreateEventType) => {
   const response = await axiosInstance.post(`/events`, payload, {
-    headers: { "X-Idempotency-Key": payload.id, },
+    headers: { ...setIdempotenHeader(payload.id) },
   });
   return response.data;
 };
@@ -42,8 +44,13 @@ export const createEvent = async (payload: CreateEventType) => {
 type UseCreateEventConfig = MutationConfig<typeof createEvent>;
 
 export const useCreateEvent = (mutationConfig: UseCreateEventConfig) => {
+  const { onSuccess, ...restConfig } = mutationConfig || {}
   return useMutation({
-    ...mutationConfig,
+    onSuccess(...args) {
+      queryClient.invalidateQueries({ queryKey: getEventQueryKey() })
+      onSuccess?.(...args)
+    },
+    ...restConfig,
     mutationFn: createEvent,
   });
 };
