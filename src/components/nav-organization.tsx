@@ -21,7 +21,7 @@ export const NavOrg = () => {
       <SidebarGroupLabel>Organization</SidebarGroupLabel>
       <SidebarMenu>
         <SidebarMenuItem>
-          <Link href="/org/new" passHref>
+          <Link href="/org/create" passHref>
             <SidebarMenuButton asChild variant="outline">
               <div>
                 <Plus />

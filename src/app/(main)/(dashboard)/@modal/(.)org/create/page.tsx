@@ -32,9 +32,11 @@ import {
 import { queryClient } from "~/lib/query-client";
 
 const NewOrgModal = () => {
+  const id = crypto.randomUUID()
   const newOrgForm = useForm<createOrgRequest>({
     resolver: zodResolver(createOrgSchema),
     defaultValues: {
+      id,
       description: "",
       name: "",
     },
