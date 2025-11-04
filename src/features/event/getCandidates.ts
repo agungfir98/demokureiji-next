@@ -28,7 +28,7 @@ export const getCandidates = async (eventId: string) => {
 
 const getCandidatesQueryConfig = (eventId: string) => {
   return queryOptions({
-    queryKey: getCandidateQueryKey(eventId),
+    queryKey: getCandidateQueryKey(),
     queryFn: () => getCandidates(eventId),
   });
 };

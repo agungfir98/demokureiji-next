@@ -16,7 +16,7 @@ export const getVoteToken = async (eventId: string) => {
 
 const useGetVoteTokenOpts = (eventId: string) => {
   return queryOptions({
-    queryKey: getVoteTokenQueryKey(eventId),
+    queryKey: getVoteTokenQueryKey(),
     queryFn: () => getVoteToken(eventId),
     enabled: !!eventId,
   });
