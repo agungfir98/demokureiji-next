@@ -34,7 +34,7 @@ export type CreateEventType = z.infer<typeof createEventandCandidateSchema>;
 
 export const createEvent = async (payload: CreateEventType) => {
   const response = await axiosInstance.post(`/events`, payload, {
-    headers: { "X-Idempotency-Key": payload.id, "X-Simulate-Delay": true },
+    headers: { "X-Idempotency-Key": payload.id, },
   });
   return response.data;
 };
