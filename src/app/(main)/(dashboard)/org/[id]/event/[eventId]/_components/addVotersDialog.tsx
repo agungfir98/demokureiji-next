@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, useState } from "react";
-import { Plus, Search } from "lucide-react";
+import { LoaderCircle, Plus, Search } from "lucide-react";
 import { useParams } from "next/navigation";
 import {
   Dialog,
@@ -40,10 +40,12 @@ import { SearchAndPaginateType } from "~/schema/query";
 import { useGetUnregisteredVoters } from "~/features/event/getUnregisteredVoter";
 import { useDebouncedCallback } from "~/hooks/useDebouncer";
 import { SearchInput } from "~/components/searchInput";
+import { useAddVoters, Voters } from "~/features/event/addVoter";
+import { toast } from "sonner";
 
 export function AddVotersDialog() {
   const [open, setOpen] = useState(false);
-  const [selectedVoters, setSelectedVoters] = useState<string[]>([]);
+  const [selectedVoters, setSelectedVoters] = useState<Voters>([]);
   const [query, setQuery] = useState<SearchAndPaginateType>({
     page: 1,
     limit: 5,
@@ -84,12 +86,13 @@ export function AddVotersDialog() {
     }
   };
 
-  const handleAddVoters = async () => {
-    // TODO: Implement API call to add selected voters
-    console.log("Adding voters:", selectedVoters);
-    setOpen(false);
-    setSelectedVoters([]);
-  };
+  const { mutate, isPending } = useAddVoters({
+    onSuccess(data) {
+      toast.success(data.message)
+      setSelectedVoters([])
+    }
+  })
+
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -270,9 +273,12 @@ export function AddVotersDialog() {
               Cancel
             </Button>
             <Button
-              onClick={handleAddVoters}
-              disabled={selectedVoters.length === 0}
+              onClick={() => mutate({ eventId: String(eventId), payload: selectedVoters })}
+              disabled={selectedVoters.length === 0 && isPending}
             >
+              <LoaderCircle
+                className={`animate-spin ${!isPending && "hidden"}`}
+              />
               Add {selectedVoters.length} Voter
               {selectedVoters.length !== 1 ? "s" : ""}
             </Button>
