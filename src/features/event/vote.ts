@@ -2,6 +2,7 @@ import { z } from "zod";
 import { axiosInstance, HttpResponse } from "../api";
 import { MutationConfig, queryClient } from "~/lib/query-client";
 import { useMutation } from "@tanstack/react-query";
+import { setIdempotenHeader } from "~/lib/utils";
 
 export const voteSchema = z
   .object({
@@ -33,7 +34,11 @@ type VoteRequest = {
 export const vote = async (params: VoteRequest) => {
   const response = await axiosInstance.post<
     HttpResponse<{ voteReceipt: string }>
-  >(`/events/${params.eventId}/votes`, params.payload);
+  >(`/events/${params.eventId}/votes`, params.payload, {
+    headers: {
+      ...setIdempotenHeader(params.payload.voteToken)
+    }
+  });
   return response.data;
 };
 
