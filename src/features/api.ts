@@ -87,7 +87,6 @@ axiosInstance.interceptors.response.use(
     } catch (refreshError) {
       processQueue(refreshError, null);
 
-      useAuthStore.getState().setToken(null);
       window.location.href = "/login";
 
       return Promise.reject(refreshError);
