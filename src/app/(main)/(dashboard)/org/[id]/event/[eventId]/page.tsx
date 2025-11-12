@@ -47,7 +47,7 @@ const EventDetail = () => {
             <EventStatus status={data.data.status} />
           </div>
           <div className="flex gap-2">
-            {!data.data.hasVoted && (
+            {data.data.status === "active" && !data.data.hasVoted && (
               <RoleBaseRenderer requiredRole="MEMBER" userRole={data.data.role}>
                 <Button
                   size="default"
