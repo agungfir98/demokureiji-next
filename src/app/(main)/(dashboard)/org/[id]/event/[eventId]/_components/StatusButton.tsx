@@ -12,6 +12,8 @@ import {
   AlertDialogTrigger,
 } from "~/components/ui/alert-dialog";
 import { Button } from "~/components/ui/button";
+import { EVENT_STATUS } from "~/constant";
+import { useGetEventStatuses } from "~/features/event/getEventStatus";
 import { usePatchEvent } from "~/features/event/patchEvent";
 import { EventStatus } from "~/type/event.type";
 
@@ -19,12 +21,8 @@ export const StatusButton: React.FC<{ status: EventStatus }> = ({ status }) => {
   const { eventId } = useParams();
   const [showDialog, setShowDialog] = useState<boolean>(false);
 
+  const { data, isPending } = useGetEventStatuses()
   const { mutate } = usePatchEvent();
-
-  // const { mutate } = eventService.UpdateEventStatus(
-  //   orgId as string,
-  //   eventId as string
-  // );
 
   const statusConfig = {
     inactive: {
@@ -33,7 +31,7 @@ export const StatusButton: React.FC<{ status: EventStatus }> = ({ status }) => {
       dialogDescription:
         "Are you sure you want to start the event? Once started, it cannot be undone.",
       actionLabel: "Start",
-      nextStatus: "active",
+      nextStatus: data?.data.find(status => status.name === EVENT_STATUS.ACTIVE)?.id
     },
     active: {
       buttonLabel: "End Event",
@@ -41,7 +39,7 @@ export const StatusButton: React.FC<{ status: EventStatus }> = ({ status }) => {
       dialogDescription:
         "Are you sure you want to end the event? This action is irreversible.",
       actionLabel: "End",
-      nextStatus: "finished",
+      nextStatus: data?.data.find(status => status.name === EVENT_STATUS.FINISHED)?.id
     },
     finished: {
       buttonLabel: "Event Finished",
@@ -76,13 +74,13 @@ export const StatusButton: React.FC<{ status: EventStatus }> = ({ status }) => {
         <AlertDialogFooter>
           {config.nextStatus && (
             <AlertDialogAction
-              disabled={status === "finished"}
+              disabled={status === "finished" && isPending}
               onClick={() =>
                 mutate({
                   eventId: String(eventId),
                   payload: {
                     id: String(eventId),
-                    status: config.nextStatus,
+                    statusId: config.nextStatus,
                   },
                 })
               }
