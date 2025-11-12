@@ -7,7 +7,7 @@ export const patchEventSchema = z.object({
   id: z.string().uuid(),
   title: z.string().optional(),
   description: z.string().optional(),
-  status: z.enum(["active", "inactive", "finished"]).optional(),
+  statusId: z.number().optional(),
   allowAbstain: z.boolean().optional(),
   requiresRegistration: z.boolean().optional(),
 });
