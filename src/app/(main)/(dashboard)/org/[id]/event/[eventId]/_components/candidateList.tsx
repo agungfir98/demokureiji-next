@@ -13,7 +13,7 @@ const CandidateList = () => {
   });
 
   return (
-    <div className="mb-6">
+    <>
       <h2 className="text-2xl font-semibold mb-4">Candidates</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {data?.data
@@ -51,7 +51,7 @@ const CandidateList = () => {
             </Card>
           ))}
       </div>
-    </div>
+    </>
   );
 };
 
