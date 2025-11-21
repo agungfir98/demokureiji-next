@@ -3,11 +3,12 @@ import { axiosInstance, HttpResponse } from "../api";
 import { getCandidateQueryKey } from ".";
 import { QueryConfig } from "~/lib/query-client";
 
-type Candidate = {
+export type Candidate = {
   id: string;
   name: string;
   email: string;
 };
+
 type CandidatesResponse = {
   id: string;
   eventId: string;
